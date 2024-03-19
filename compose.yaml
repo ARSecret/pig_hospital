@@ -1,0 +1,28 @@
+services:
+  postgres:
+    image: "postgres:latest"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123
+      - POSTGRES_DB=my_database
+
+  laravel:
+    build: backend
+    ports:
+      - "8000:80"
+    depends_on:
+      - postgres
+    environment:
+      - DB_HOST=postgres
+      - DB_DATABASE=my_database
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=123
+
+  vue:
+    build: frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - laravel
+    environment:
+      - BACKEND_URL=laravel

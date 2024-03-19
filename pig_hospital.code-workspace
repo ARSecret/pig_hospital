@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"name": "pig_hospital",
+			"path": "."
+		},
+		{
+			"name": "backend",
+			"path": "backend"
+		},
+		{
+			"path": "frontend"
+		}
+	],
+	"settings": {}
+}
