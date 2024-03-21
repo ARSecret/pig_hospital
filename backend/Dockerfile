@@ -17,3 +17,7 @@ RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf
 RUN chown -R www-data /var/www/html/storage
 RUN chown -R www-data /var/www/html/bootstrap/cache
 RUN a2enmod rewrite
+
+ARG FRONTEND_URL
+RUN test -n "${FRONTEND_URL}"
+ENV FRONTEND_URL=${FRONTEND_URL}
