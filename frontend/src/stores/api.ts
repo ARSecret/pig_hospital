@@ -16,7 +16,7 @@ export const useApi = defineStore('api', () => {
     const API_PREFIX = '/api';
 
     const axiosInstance = axios.create({
-        baseURL: import.meta.env.BACKEND_URL || 'http://localhost:8000',
+        baseURL: import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000',
         withCredentials: true,
         withXSRFToken: true,
     });

@@ -24,5 +24,3 @@ services:
       - "5173:80"
     depends_on:
       - laravel
-    environment:
-      - BACKEND_URL=laravel
