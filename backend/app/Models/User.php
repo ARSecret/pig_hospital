@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -60,18 +61,8 @@ class User extends Authenticatable
         );
     }
 
-    public function patient(): HasOne
+    public function concrete(): MorphTo 
     {
-        return $this->hasOne(Patient::class);
-    }
-
-    public function doctor(): HasOne
-    {
-        return $this->hasOne(Doctor::class);
-    }
-
-    public function nurse(): HasOne
-    {
-        return $this->hasOne(Nurse::class);
+        return $this->morphTo('concrete');
     }
 }

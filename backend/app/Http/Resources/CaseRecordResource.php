@@ -16,10 +16,10 @@ class CaseRecordResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'datetime' => $this->datetime,
+            'date_time' => $this->date_time,
             'doctor' => [
                 'id' => $this->doctor->id,
-                'full_name' => $this->doctor->user->full_name,
+                'fullName' => $this->doctor->full_name,
                 'speciality' => [
                     'id' => $this->doctor->speciality->id,
                     'name' => $this->doctor->speciality->name,
@@ -27,7 +27,7 @@ class CaseRecordResource extends JsonResource
             ],
             'patient' => [
                 'id' => $this->patient->id,
-                'full_name' => $this->patient->user->full_name,
+                'fullName' => $this->patient->full_name,
             ],
             'text' => $this->text,
         ];

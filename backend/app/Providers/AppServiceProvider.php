@@ -20,5 +20,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
+        ini_set('display_errors', "stderr");
+        ini_set('error_reporting', E_ALL);
     }
 }

@@ -77,3 +77,4 @@ async function cancelAppointment(appointmentId: string) {
 </template>
 
 <style lang="scss"></style>
+@/api

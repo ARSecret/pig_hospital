@@ -41,3 +41,4 @@ api.getAllDoctorPatients().then(result => {
         </div>
     </div>
 </template>
+../api

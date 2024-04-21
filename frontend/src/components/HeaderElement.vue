@@ -1,24 +1,35 @@
-<script setup lang="ts">
-import AccountElement from './AccountElement.vue';
-import LoginModal from './LoginModal.vue';
+<script setup>
+import { ref, inject } from 'vue';
 
-import { useApi } from '@/stores/api';
-import { ref } from 'vue';
+import AccountElement from '@/components/AccountElement.vue';
+import LoginModal from '@/components/LoginModal.vue';
 
 const LOGIN_MODAL_ID = 'my-login-modal';
 
-let api = useApi();
+// let api = inject('api');
 </script>
 
 <template>
     <div class="navbar navbar-expand-lg border-bottom fixed-top bg-body-tertiary">
         <div class="container">
             <a href="" class="navbar-brand">
-                <img alt="Логотип больницы" class="logo d-inline-block align-text-center" src="@/assets/pig-logo.png"
-                    width="82" height="82" />
+                <img
+                    alt="Логотип больницы"
+                    class="logo d-inline-block align-text-center"
+                    src="@/assets/pig-logo.png"
+                    width="82"
+                    height="82"
+                />
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent"
+                aria-expanded="false"
+                aria-label="Toggle navigation"
+            >
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -45,3 +56,4 @@ let api = useApi();
 </template>
 
 <style lang="scss"></style>
+@/api

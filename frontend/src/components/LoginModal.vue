@@ -1,50 +1,63 @@
-<script setup lang="ts">
-import * as bootstrap from 'bootstrap';
-import { ref } from 'vue';
+<script setup>
+import { Modal } from 'bootstrap';
+import { inject, ref } from 'vue';
 
-import { useApi } from '@/stores/api';
+let api = inject('api');
 
-let api = useApi();
-
-let props = defineProps<{
-    id: string,
-}>();
+let { id } = defineProps(['id']);
 
 let password = ref('');
 let login = ref('');
 let loginFailed = ref(false);
 
-async function attemptLogin(event: Event) {
+async function attemptLogin(event) {
     event.preventDefault();
-    let result = await api.attemptLogin(login.value, password.value);
+    let result = await api.logIn(login.value, password.value);
     if (!result) {
         console.log('failed login');
         loginFailed.value = true;
-    } else {
-        let modalElement = document.getElementById(props.id);
-        if (!modalElement) {
-            throw new Error('');
-        }
-        let modal = bootstrap.Modal.getInstance(modalElement);
-        modal?.hide();
+        return;
     }
+
+    let modalElement = document.getElementById(id);
+    if (!modalElement) {
+        throw new Error("Couldn't query log-in modal");
+    }
+    let modal = Modal.getInstance(modalElement);
+    modal?.hide();
 }
 </script>
 
 <template>
-    <div class="modal fade" :id="props.id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div
+        :id
+        class="modal fade"
+        tabindex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+    >
         <div class="modal-dialog">
             <div class="modal-content">
                 <form>
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="exampleInputEmail1" class="form-label">Логин</label>
-                            <input type="text" :class="'form-control' + (loginFailed ? ' is-invalid' : '')" id="exampleInputEmail1" aria-describedby="emailHelp"
-                                v-model="login">
+                            <input
+                                id="exampleInputEmail1"
+                                v-model="login"
+                                type="text"
+                                :class="'form-control' + (loginFailed ? ' is-invalid' : '')"
+                                aria-describedby="emailHelp"
+                            />
                         </div>
                         <div class="mb-4">
                             <label for="exampleInputPassword1" class="form-label">Пароль</label>
-                            <input type="password" :class="'form-control' + (loginFailed ? ' is-invalid' : '')" id="exampleInputPassword1" v-model="password">
+                            <input
+                                id="exampleInputPassword1"
+                                v-model="password"
+                                type="password"
+                                :class="'form-control' + (loginFailed ? ' is-invalid' : '')"
+                            />
                             <div class="invalid-feedback">Неверный логин или пароль!</div>
                         </div>
 

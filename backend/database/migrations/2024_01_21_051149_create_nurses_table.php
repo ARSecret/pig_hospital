@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create(
-            'nurses', function (Blueprint $table) {
+        Schema::create('nurses', function (Blueprint $table) {
                 $table->id();
-                $table->foreignId('user_id')->constrained();
                 $table->foreignId('doctor_id')->constrained();
-            }
-        );
+        });
     }
 
     /**

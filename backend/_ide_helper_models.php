@@ -18,10 +18,11 @@ namespace App\Models{
  * @property int $id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read string $datetime
+ * @property string $dateTime
  * @property int $patient_id
  * @property int $doctor_id
- * @property string $status
+ * @property \App\Models\Enums\AppointmentStatus $status
+ * @property-read mixed $datetime
  * @property-read \App\Models\Doctor|null $doctor
  * @property-read \App\Models\Patient|null $patient
  * @property-read mixed $pretty_status
@@ -30,7 +31,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Appointment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Appointment query()
  * @method static \Illuminate\Database\Eloquent\Builder|Appointment whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Appointment whereDatetime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Appointment whereDateTime($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Appointment whereDoctorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Appointment whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Appointment wherePatientId($value)
@@ -74,7 +75,6 @@ namespace App\Models{
  *
  * @mixin Eloquent
  * @property int $id
- * @property int $user_id
  * @property int $speciality_id
  * @property bool $active
  * @property string|null $photo_url
@@ -87,12 +87,8 @@ namespace App\Models{
  * @property-read int|null $appointments_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CaseRecord> $caseRecords
  * @property-read int|null $case_records_count
- * @property-read mixed $first_name
- * @property-read mixed $full_name
- * @property-read mixed $last_name
  * @property-read \App\Models\Nurse|null $nurse
  * @property-read \App\Models\Speciality $speciality
- * @property-read \App\Models\User $user
  * @method static \Database\Factories\DoctorFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Doctor newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Doctor newQuery()
@@ -104,7 +100,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Doctor whereLunchStart($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Doctor wherePhotoUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Doctor whereSpecialityId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Doctor whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Doctor whereWorkdayEnd($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Doctor whereWorkdayStart($value)
  */
@@ -142,7 +137,6 @@ namespace App\Models{
  * 
  *
  * @property int $id
- * @property int $user_id
  * @property int $doctor_id
  * @property-read \App\Models\Doctor|null $doctor
  * @method static \Database\Factories\NurseFactory factory($count = null, $state = [])
@@ -151,7 +145,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Nurse query()
  * @method static \Illuminate\Database\Eloquent\Builder|Nurse whereDoctorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Nurse whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Nurse whereUserId($value)
  */
 	class Nurse extends \Eloquent {}
 }
@@ -161,20 +154,22 @@ namespace App\Models{
  * 
  *
  * @property int $id
- * @property int $user_id
  * @property string $birthdate
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Appointment> $appointments
  * @property-read int|null $appointments_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CaseRecord> $case_records
  * @property-read int|null $case_records_count
+ * @property-read mixed $first_name
  * @property-read mixed $full_name
- * @property-read \App\Models\User $user
+ * @property-read mixed $last_name
+ * @property-read mixed $patronymic
+ * @property-read \App\Models\User|null $user
+ * @method static \Database\Factories\PatientFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Patient newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Patient newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Patient query()
  * @method static \Illuminate\Database\Eloquent\Builder|Patient whereBirthdate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Patient whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Patient whereUserId($value)
  */
 	class Patient extends \Eloquent {}
 }
@@ -201,7 +196,7 @@ namespace App\Models{
  * 
  *
  * @property int $id
- * @property string $login
+ * @property string $username
  * @property string $email
  * @property \Illuminate\Support\Carbon|null $email_verified_at
  * @property mixed $password
@@ -212,19 +207,20 @@ namespace App\Models{
  * @property string $first_name
  * @property string $last_name
  * @property string|null $patronymic
- * @property string $role
- * @property-read \App\Models\Doctor|null $doctor
+ * @property int $concrete_id
+ * @property string $concrete_type
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $concrete
  * @property-read mixed $full_name
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
- * @property-read \App\Models\Nurse|null $nurse
- * @property-read \App\Models\Patient|null $patient
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Sanctum\PersonalAccessToken> $tokens
  * @property-read int|null $tokens_count
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|User newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|User query()
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereConcreteId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereConcreteType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereEmailVerifiedAt($value)
@@ -232,12 +228,11 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User whereGender($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereLastName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereLogin($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User wherePatronymic($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereRememberToken($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereRole($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereUsername($value)
  */
 	class User extends \Eloquent {}
 }

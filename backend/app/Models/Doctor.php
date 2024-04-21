@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\ConcreteUser;
 use DateInterval;
 use DateTime;
 use DateTimeInterface;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Support\Collection;
 
 /**
@@ -19,44 +21,14 @@ use Illuminate\Support\Collection;
 class Doctor extends Model
 {
     use HasFactory;
+    use ConcreteUser;
 
     public $timestamps = false;
 
     public function speciality(): BelongsTo
     {
         return $this->belongsTo(Speciality::class);
-    }
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    public function getFullName(): string
-    {
-        return $this->first_name . ' ' . $this->last_name;
-    }
-
-    public function firstName(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->user->first_name,
-        );
-    }
-
-    public function lastName(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->user->last_name,
-        );
-    }
-
-    public function fullName(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->first_name . ' ' . $this->last_name,
-        );
-    }
+    }  
 
     public function appointments(): HasMany
     {
@@ -141,7 +113,7 @@ class Doctor extends Model
         $appointment = new Appointment;
         $appointment->patient()->associate($patient);
         $appointment->doctor()->associate($this);
-        $appointment->datetime = $datetime;
+        $appointment->date_time = $datetime;
         $appointment->save();
 
         return $appointment;

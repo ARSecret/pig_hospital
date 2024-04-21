@@ -1,58 +1,48 @@
-<script setup lang="ts">
-import { type Ref, ref } from 'vue';
+<script setup>
+import { useRouter } from 'vue-router';
+import { ref, inject } from 'vue';
 
-import { useApi, type Speciality } from '@/stores/api';
+import DoctorCard from '@/components/DoctorCard.vue';
 
-let api = useApi();
-
-let speciality: Ref<Speciality | null> = ref(null);
-let doctors: Ref<any[]> = ref([]);
-
-
-reloadDoctors();
-
-
-function getDoctorImageUrl(doctor: any): string {
-    if (doctor.photo_url) {
-        return doctor.photo_url;
-    }
-
-    return `/default-doctor-${doctor.gender}.jpg`;
-}
-
-function reloadDoctors() {
+function loadDoctors() {
     speciality.value = null;
     doctors.value = [];
-
+    
     let queryParams = new URL(document.location.href).searchParams;
     let specialityId = queryParams.get('speciality_id');
     
     if (specialityId) {
-        api.getSpeciality(specialityId).then(result => {
+        api.getSpeciality(specialityId).then((result) => {
             speciality.value = result;
         });
     }
 
-    api.getAllDoctors(specialityId).then(result => {
+    api.getDoctors(specialityId).then((result) => {
         doctors.value = result;
+        console.log('Doctors:', doctors.value);
     });
 }
 
-function removeSpecialityFilter() {
-    let url = new URL(document.location.href);
-    url.searchParams.delete('speciality_id');
-    document.location.href = url.href;
-    
+async function removeSpecialityFilter() {
+    await router.replace({ name: 'doctors' });
+    loadDoctors();
 }
 
+let api = inject('api');
+let router = useRouter();
+
+let speciality = ref(null);
+let doctors = ref(null);
+
+loadDoctors();
 </script>
 
 <template>
-    <div v-if="!doctors.length">
+    <div v-if="!doctors">
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
-            <div class="col" v-for="_ in 8">
+            <div v-for="_ in 8" :key="_" class="col">
                 <div class="card">
-                    <img alt="" class="card-img-top placeholder" height="250px">
+                    <img alt="" class="card-img-top placeholder" height="250px" />
                     <div class="card-body">
                         <h5 class="card-title placeholder-glow">
                             <span class="placeholder col-12"></span>
@@ -68,22 +58,21 @@ function removeSpecialityFilter() {
     </div>
 
     <div v-else>
-        <div v-if="speciality"
-            class="d-inline-flex mb-3 px-2 py-1 fw-semibold text-success-emphasis bg-success-subtle border border-success-subtle rounded-2">
+        <div
+            v-if="speciality"
+            class="d-inline-flex mb-3 px-2 py-1 fw-semibold text-success-emphasis bg-success-subtle border border-success-subtle rounded-2"
+        >
             {{ speciality.name }}
             <button class="btn-close" @click="removeSpecialityFilter"></button>
         </div>
 
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
-            <div class="col" v-for="doctor in doctors">
-                <div class="card">
-                    <img :src="getDoctorImageUrl(doctor)" alt="" class="card-img-top">
-                    <div class="card-body">
-                        <h5 class="card-title text-nowrap">{{ doctor.full_name }}</h5>
-                        <p class="card-text text-nowrap">{{ doctor.speciality.name }}</p>
-                        <RouterLink :to="{name: 'doctor-appointments', params: {doctorId: doctor.id}}" class="btn btn-primary">Подробнее</RouterLink>
-                    </div>
-                </div>
+        <div class="row g-4">
+            <div
+                v-for="doctor in doctors"
+                :key="doctor.id"
+                class="col-12 col-md-6 col-lg-4 col-xl-3"
+            >
+                <DoctorCard :doctor />
             </div>
         </div>
     </div>

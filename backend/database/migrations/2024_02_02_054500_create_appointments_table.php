@@ -15,7 +15,7 @@ return new class extends Migration
             'appointments', function (Blueprint $table) {
                 $table->id();
                 $table->timestamps();
-                $table->dateTime('datetime');
+                $table->date_time('date_time');
                 $table->foreignId('patient_id');
                 $table->foreignId('doctor_id');
                 $table->enum(

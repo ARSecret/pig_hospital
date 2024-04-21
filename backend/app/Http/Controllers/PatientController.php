@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 use App\Models\Patient;
-use App\Http\Resources\PatientResource;
+use App\Http\Resources\UserPatientResource;
 use App\Http\Resources\AppointmentResource;
 use App\Http\Resources\CaseRecordResource;
 use App\Models\CaseRecord;
@@ -19,7 +19,7 @@ class PatientController extends Controller
     public function show(Patient $patient) {
         $this->authorize('view', $patient);
 
-        return new PatientResource($patient);
+        return new UserPatientResource($patient);
     }
     
     public function index()

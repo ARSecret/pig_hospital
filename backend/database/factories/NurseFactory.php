@@ -19,7 +19,6 @@ class NurseFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory()->nurse(),
             'doctor_id' => Doctor::inRandomOrder()->first(),
         ];
     }

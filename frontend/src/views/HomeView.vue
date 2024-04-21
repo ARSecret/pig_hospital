@@ -1,17 +1,15 @@
-<script setup lang="ts">
-import { useApi } from '@/stores/api';
-import { ref, type Ref } from 'vue';
+<script setup>
+import { ref, inject } from 'vue';
 
+let api = inject('api');
 
-let api = useApi();
+let news = ref(null);
 
-let news: Ref<any[]> = ref([]);
-
-api.getAllNews().then(result => {
+api.getNews().then((result) => {
     news.value = result;
 });
 
-function getNewsDateString(newsItem: any) {
+function getNewsDateString(newsItem) {
     let date = new Date(newsItem.date);
     let day = date.getDate();
     let dayString = day.toString();
@@ -30,40 +28,55 @@ function getNewsDateString(newsItem: any) {
 </script>
 
 <template>
-  <div v-if="!news.length">
-    <div class="card mb-3" v-for="_ in 8">
-      <div class="row g-0">
-        <div class="col-md-4">
-          <img width=640 height=320 class="img-fluid rounded-start placeholder" alt="Placeholder">
+    <div v-if="!news">
+        <div v-for="i in 8" :key="i" class="card mb-3">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    <img
+                        width="640"
+                        height="320"
+                        class="img-fluid rounded-start placeholder"
+                        alt="Placeholder"
+                    />
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 class="card-title placeholder-glow">
+                            <span class="placeholder col-8"></span>
+                        </h5>
+                        <p class="card-text placeholder-glow">
+                            <span class="placeholder col-12"></span>
+                            <span class="placeholder col-12"></span>
+                            <span class="placeholder col-8"></span>
+                        </p>
+                        <p class="card-text placeholder-glow">
+                            <small class="text-body-secondary placeholder col-3"></small>
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="col-md-8">
-          <div class="card-body">
-            <h5 class="card-title placeholder-glow">
-              <span class="placeholder col-8"></span>
-            </h5>
-            <p class="card-text placeholder-glow">
-              <span class="placeholder col-12"></span>
-              <span class="placeholder col-12"></span>
-              <span class="placeholder col-8"></span>
-            </p>
-            <p class="card-text placeholder-glow"><small class="text-body-secondary placeholder col-3"></small></p>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
-  <div v-for="newsItem in news" class="card mb-3">
-    <div class="row g-0">
-      <div class="col-md-4">
-        <img v-if="newsItem.image_url" class="img-fluid rounded-start" :src="newsItem.image_url" alt="Фото новости">
-      </div>
-      <div class="col-md-8">
-        <div class="card-body">
-          <h5 class="card-title">{{ newsItem.title }}</h5>
-          <p class="card-text">{{ newsItem.text }}</p>
-          <p class="card-text"><small class="text-body-secondary">{{ getNewsDateString(newsItem) }}</small></p>
+    <div v-for="newsItem in news" v-else :key="newsItem.id" class="card mb-3">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img
+                    v-if="newsItem.image_url"
+                    class="img-fluid rounded-start"
+                    :src="newsItem.image_url"
+                    alt="Фото новости"
+                />
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">{{ newsItem.title }}</h5>
+                    <p class="card-text">{{ newsItem.text }}</p>
+                    <p class="card-text">
+                        <small class="text-body-secondary">{{ getNewsDateString(newsItem) }}</small>
+                    </p>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 </template>
+@/api

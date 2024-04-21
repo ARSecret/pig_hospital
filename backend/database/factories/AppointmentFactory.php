@@ -3,7 +3,9 @@
 namespace Database\Factories;
 
 use App\Models\Doctor;
+use App\Models\Enums\AppointmentStatus;
 use App\Models\Patient;
+use Database\Seeders\AppointmentSeeder;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -13,11 +15,11 @@ class AppointmentFactory extends Factory
 {
     private Patient $patient;
     private Doctor $doctor;
-    
+
     public function definition(): array
     {
         $this->doctor = Doctor::inRandomOrder()->first();
-        
+
         return [
             'doctor_id' => $this->doctor->id,
         ];
@@ -28,13 +30,13 @@ class AppointmentFactory extends Factory
         return $this->state(
             function (array $attributes) {
                 do {
-                    $datetime = fake()->dateTimeBetween('-10 years', 'yesterday');
+                    $datetime = fake()->date_timeBetween('-10 years', 'yesterday');
                     $possibleDatetimes = $this->doctor->getPossibleAppointmentDatetimes($datetime);
                 } while (empty($possibleDatetimes));
 
                 return [
-                    'status' => 'successful',
-                    'datetime' => fake()->randomElement($possibleDatetimes),
+                    'status' => AppointmentStatus::Successful,
+                    'date_time' => fake()->randomElement($possibleDatetimes),
                 ];
             }
         );
@@ -45,13 +47,16 @@ class AppointmentFactory extends Factory
         return $this->state(
             function (array $attributes) {
                 do {
-                    $datetime = fake()->dateTimeBetween('-10 years', 'yesterday');
+                    $datetime = fake()->date_timeBetween('-10 years', 'yesterday');
                     $possibleDatetimes = $this->doctor->getPossibleAppointmentDatetimes($datetime);
                 } while (empty($possibleDatetimes));
 
                 return [
-                    'status' => fake()->randomElement(['cancelled', 'didnt-come']),
-                    'datetime' => fake()->randomElement($possibleDatetimes),
+                    'status' => fake()->randomElement([
+                        AppointmentStatus::Cancelled,
+                        AppointmentStatus::DidntCome,
+                    ]),
+                    'date_time' => fake()->randomElement($possibleDatetimes),
                 ];
             }
         );
@@ -62,13 +67,16 @@ class AppointmentFactory extends Factory
         return $this->state(
             function (array $attributes) {
                 do {
-                    $datetime = fake()->dateTimeBetween('today', '+2 months');
+                    $datetime = fake()->date_timeBetween('today', '+2 months');
                     $availableDatetimes = $this->doctor->getPossibleAppointmentDatetimes($datetime);
                 } while (empty($availableDatetimes));
 
                 return [
-                    'status' => fake()->randomElement(['created', 'confirmed']),
-                    'datetime' => fake()->randomElement($availableDatetimes),
+                    'status' => fake()->randomElement([
+                        AppointmentStatus::Created,
+                        AppointmentStatus::Confirmed,
+                    ]),
+                    'date_time' => fake()->randomElement($availableDatetimes),
                 ];
             }
         );

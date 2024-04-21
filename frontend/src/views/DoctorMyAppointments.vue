@@ -104,3 +104,4 @@ function confirmAppointment(id: string) {
 </template>
 
 <style lang="scss"></style>
+@/api

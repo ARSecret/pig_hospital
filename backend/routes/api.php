@@ -8,8 +8,15 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\Authentication;
 use App\Http\Controllers\NewsController;
+use App\Http\Resources\UserDoctorResource;
+use App\Http\Resources\UserNurseResource;
+use App\Http\Resources\UserPatientResource;
 use App\Http\Resources\UserResource;
+use App\Models\Doctor;
+use App\Models\Nurse;
+use App\Models\Patient;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,48 +32,38 @@ use App\Http\Resources\UserResource;
 Route::middleware('auth:sanctum')->get(
     '/user',
     function (Request $request) {
-        return new UserResource($request->user());
-    }
-);
-
-Route::post(
-    '/login',
-    function (Request $request) {
-        $credentials = $request->validate(
-            [
-                'login' => ['required'],
-                'password' => ['required'],
-            ]
-        );
-
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            return response('login successful', 200);
+        $concrete = $request->user()->concrete;
+        switch ($concrete::class) {
+            case Patient::class:
+                return new UserPatientResource($concrete);
+            case Doctor::class:
+                return new UserDoctorResource($concrete);
+            case Nurse::class:
+                return new UserNurseResource($concrete);
         }
-
-        abort(403);
     }
 );
 
-Route::post(
-    '/logout',
-    function (Request $request) {
-        if (!$request->user()) {
-            abort(403);
-        }
-
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        return response(null, 200);
-    }
-);
+Route::prefix('auth')->group(function () {
+    Route::middleware('guest')->group(function () {
+        Route::post('log-in', [
+            Authentication\LogInController::class, 'create'
+        ]);
+        Route::post('join', [
+            Authentication\JoinController::class, 'create'
+        ]);
+    });
+    Route::middleware('auth')->group(function () {
+        Route::delete('log-out', [
+            Authentication\LogInController::class, 'destroy'
+        ]);
+    });
+});
 
 Route::controller(PatientController::class)->group(
     function () {
         Route::get('/patients', 'index');
         Route::get('/patients/{patient}', 'show');
-        Route::get('/patients/{patient}/appointments', 'indexAppointments');
         Route::get('/patients/{patient}/case-records', 'indexCaseRecords');
         Route::post('/patients/{patient}/case-records', 'storeCaseRecord');
     }
@@ -77,18 +74,21 @@ Route::controller(DoctorController::class)->group(
         Route::get('/doctors', 'index');
         Route::get('/doctors/{doctor}', 'show');
         Route::get('/doctors/{doctor}/patients', 'indexPatients');
-        Route::get('/doctors/{doctor}/appointments', 'indexAppointments');
-        Route::get('/doctors/{doctor}/available-appointments', 'indexAvailableAppointments');
-        Route::post('/doctors/{doctor}/appointments', 'storeAppointment');
+        Route::get('/doctors/{doctor}/available-appointment-times', 'indexAvailableAppointmentTimes');
     }
 );
 
-Route::controller(AppointmentController::class)->group(
-    function () {
-        Route::delete('/appointments/{appointment}', 'destroy');
-        Route::patch('/appointments/{appointment}/confirm', 'confirm');
-    }
-);
+Route::controller(AppointmentController::class)
+    ->middleware('auth')
+    ->group(
+        function () {
+            Route::get('/patients/{patient}/appointments', 'indexPatient');
+            Route::get('/doctors/{doctor}/appointments', 'indexDoctor');
+            Route::post('/doctors/{doctor}/appointments', 'store');
+            Route::delete('/appointments/{appointment}', 'destroy');
+            Route::patch('/appointments/{appointment}/confirm', 'confirm');
+        }
+    );
 
 Route::controller(NewsController::class)->group(
     function () {

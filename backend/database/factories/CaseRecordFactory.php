@@ -20,7 +20,7 @@ class CaseRecordFactory extends Factory
     {
         return [
             'doctor_id' => Doctor::inRandomOrder()->first()->id,
-            'datetime' => fake()->dateTimeBetween('-10 years', '-1 day'),
+            'datetime' => fake()->date_timeBetween('-10 years', '-1 day'),
             'text' => fake('ru_RU')->text(200),
         ];
     }

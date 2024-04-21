@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\ConcreteUser;
 use DateTime;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
@@ -9,17 +10,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class Patient extends Model
 {
     use HasFactory;
+    use ConcreteUser;
 
     public $timestamps = false;
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
 
     public function appointments(): HasMany
     {
@@ -29,13 +27,6 @@ class Patient extends Model
     public function case_records(): HasMany
     {
         return $this->hasMany(CaseRecord::class);
-    }
-
-    public function fullName(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->user->full_name,
-        );
     }
 
     public function getAge(): int {

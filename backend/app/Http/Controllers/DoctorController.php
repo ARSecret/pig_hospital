@@ -9,9 +9,12 @@ use DateTime;
 
 use App\Models\Doctor;
 use App\Models\Appointment;
-use App\Http\Resources\DoctorResource;
-use App\Http\Resources\PatientResource;
+use App\Http\Resources\UserDoctorResource;
+use App\Http\Resources\UserPatientResource;
 use App\Http\Resources\AppointmentResource;
+use App\Http\Resources\PublicDoctorResource;
+use App\Models\Speciality;
+use Illuminate\Validation\Rule;
 
 class DoctorController extends Controller
 {
@@ -19,12 +22,18 @@ class DoctorController extends Controller
     {
         $this->authorize('viewAny', Doctor::class);
 
+        $request->validate([
+            'specialityId' => [
+                Rule::exists(Speciality::class, 'id'),
+            ],
+        ]);
+
         $doctors = Doctor::all()->sortBy('speciality_id');
-        foreach ($request->query() as $key => $value) {
-            $doctors = $doctors->where($key, $value);
+        if (isset($request->specialityId)) {
+            $doctors = $doctors->where('speciality_id', $request->specialityId);
         }
 
-        return DoctorResource::collection($doctors);
+        return PublicDoctorResource::collection($doctors);
     }
 
     // public function store(Request $request)
@@ -36,7 +45,7 @@ class DoctorController extends Controller
     {
         $this->authorize('view', $doctor);
 
-        return new DoctorResource($doctor);
+        return new PublicDoctorResource($doctor);
     }
 
     // public function update(Request $request, string $id)
@@ -50,7 +59,7 @@ class DoctorController extends Controller
     {
         $this->authorize('viewPatients', $doctor);
 
-        return PatientResource::collection($doctor->getPatients()->sortBy('full_name'));
+        return UserPatientResource::collection($doctor->getPatients()->sortBy('full_name'));
     }
 
     public function indexAppointments(Request $request, Doctor $doctor)
@@ -71,7 +80,7 @@ class DoctorController extends Controller
         );
     }
 
-    public function indexAvailableAppointments(Request $request, Doctor $doctor)
+    public function indexAvailableAppointmentTimes(Request $request, Doctor $doctor)
     {
         $this->authorize('viewAvailableAppointments', Doctor::class);
 
@@ -87,29 +96,5 @@ class DoctorController extends Controller
                 $doctor->getAvailableAppointmentDatetimes(new DateTime($request->date))
             ),
         ];
-    }
-    
-    public function storeAppointment(Request $request, Doctor $doctor)
-    {
-        $this->authorize('create', Appointment::class);
-
-        $request->validate(
-            [
-                'datetime' => ['required', 'date'],
-            ]
-        );
-
-        $datetime = new DateTime($request->datetime);
-        error_log(print_r($datetime, true));
-
-        $result = $doctor->addAppointment(
-            $request->user()->patient,
-            new DateTime($request->datetime),
-        );
-        if (!$result) {
-            abort(400, 'Invalid appointment datetime');
-        }
-
-        return response('Appointment created', 200);
     }
 }

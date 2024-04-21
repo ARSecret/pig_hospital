@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create(
             'doctors', function (Blueprint $table) {
                 $table->id();
-                $table->foreignId('user_id')->constrained();
                 $table->foreignId('speciality_id')->constrained();
                 $table->boolean('active')->default(true);
                 $table->string('photo_url')->nullable();

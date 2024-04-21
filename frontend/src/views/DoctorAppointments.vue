@@ -100,3 +100,4 @@ function addAppointment(datetimeString: string) {
 </template>
 
 <style lang="scss"></style>
+@/api

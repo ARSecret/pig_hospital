@@ -132,3 +132,4 @@ function addNewCaseRecord(event: Event) {
         </div>
     </div>
 </template>
+@/api

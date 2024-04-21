@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-
 use App\Models\Doctor;
 use App\Models\Nurse;
 use App\Models\Speciality;
@@ -16,24 +15,25 @@ class DoctorSeeder extends Seeder
     {
         $this->createTestDoctor();
 
-        Doctor::factory()->count(12)->has(Nurse::factory())->create();
+        Doctor::factory()->withPhoto('male')
+            ->has(User::factory()->gender('male'))
+            ->count(6)->create();
+        Doctor::factory()->withPhoto('female')
+            ->has(User::factory()->gender('female'))
+            ->count(7)->create();
     }
 
     private function createTestDoctor(): void
     {
-        $testDoctorUser = new User;
-        $testDoctorUser->first_name = 'Иван';
-        $testDoctorUser->last_name = 'Петров';
-        $testDoctorUser->login = 'testdoctor';
-        $testDoctorUser->password = Hash::make('test');
-        $testDoctorUser->email = 'test@doctor.com';
-        $testDoctorUser->gender = 'male';
-        $testDoctorUser->role = 'doctor';
-        $testDoctorUser->save();
-
-        $testDoctor = new Doctor;
-        $testDoctor->user()->associate($testDoctorUser);
-        $testDoctor->speciality()->associate(Speciality::first());
-        $testDoctor->save();
+        Doctor::factory()->for(
+            Speciality::whereName('терапевт')->first()
+        )->has(User::factory()->state([
+            'first_name' => 'Пётр',
+            'last_name' => 'Иванов',
+            'username' => 'testdoctor',
+            'password' => Hash::make('test'),
+            'email' => 'test@doctor.com',
+            'gender' => 'male',
+        ]))->create();
     }
 }

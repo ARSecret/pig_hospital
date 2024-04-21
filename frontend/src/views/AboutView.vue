@@ -17,3 +17,4 @@ api.getAboutText().then(result => {
 
 <style lang="scss">
 </style>
+@/api

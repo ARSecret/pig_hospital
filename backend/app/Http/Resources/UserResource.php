@@ -2,6 +2,9 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Doctor;
+use App\Models\Nurse;
+use App\Models\Patient;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -16,15 +19,12 @@ class UserResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'login' => $this->login,
+            'username' => $this->username,
             'email' => $this->email,
-            'first_name' => $this->first_name,
-            'last_name' => $this->last_name,
-            'patronymic' => $this->whenNotNull('patronymic'),
-            'full_name' => $this->full_name,
-            'role' => $this->role,
-            'doctor' => $this->doctor ? new DoctorResource($this->doctor) : null,
-            'patient' => $this->patient ? new PatientResource($this->patient) : null,
+            'firstName' => $this->first_name,
+            'lastName' => $this->last_name,
+            'patronymic' => $this->whenNotNull($this->patronymic),
+            'fullName' => $this->full_name,
         ];
     }
 }

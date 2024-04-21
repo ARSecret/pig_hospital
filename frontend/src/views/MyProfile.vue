@@ -22,3 +22,4 @@ let role = computed(() => {
         Ваш логин: {{ api.user.login }}
     </div>
 </template>
+@/api

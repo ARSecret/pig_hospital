@@ -1,37 +1,54 @@
-<script setup lang="ts">
-import { useApi } from '@/stores/api';
+<script setup>
+import { inject } from 'vue';
 import { RouterLink } from 'vue-router';
 
-let api = useApi();
-
-let props = defineProps<{
-    loginModalId: string,
-}>();
-
 function logout() {
-    api.logout();
+    api.logOut();
     console.log('Logged out');
 }
+
+let api = inject('api');
+let user = api.user;
+
+defineProps(['loginModalId']);
+
+console.log(api.user.value);
 </script>
 
 <template>
-    <div v-if="api.user" class="d-flex">
+    <div v-if="user" class="d-flex">
         <div class="dropdown me-2">
-            <button class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">{{ api.user.login }}</button>
+            <button class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">
+                {{ user.username }}
+            </button>
             <ul class="dropdown-menu">
                 <li>
-                    <RouterLink :to="{ name: 'my-profile' }" class="dropdown-item">Личный кабинет</RouterLink>
+                    <RouterLink :to="{ name: 'my-profile' }" class="dropdown-item"
+                        >Личный кабинет</RouterLink
+                    >
                 </li>
                 <li>
-                    <RouterLink :to="{ name: 'my-patients' }" class="dropdown-item" v-if="api.user.role == 'doctor'">Мои пациенты
+                    <RouterLink
+                        v-if="user.role == 'doctor'"
+                        :to="{ name: 'my-patients' }"
+                        class="dropdown-item"
+                        >Мои пациенты
                     </RouterLink>
                 </li>
                 <li>
-                    <RouterLink :to="{ name: 'my-appointments' }" class="dropdown-item" v-if="api.user.role == 'doctor'">Мои приемы
+                    <RouterLink
+                        v-if="user.role == 'doctor'"
+                        :to="{ name: 'my-appointments' }"
+                        class="dropdown-item"
+                        >Мои приемы
                     </RouterLink>
                 </li>
                 <li>
-                    <RouterLink :to="{ name: 'patient-appointments' }" class="dropdown-item" v-if="api.user.role == 'patient'">Мои записи
+                    <RouterLink
+                        v-if="user.role == 'patient'"
+                        :to="{ name: 'patient-appointments' }"
+                        class="dropdown-item"
+                        >Мои записи
                     </RouterLink>
                 </li>
             </ul>
@@ -41,13 +58,16 @@ function logout() {
     </div>
 
     <div v-else class="btn-group">
-        <button class="btn btn-outline-primary" data-bs-toggle="modal" :data-bs-target="'#' + props.loginModalId">
+        <button
+            class="btn btn-outline-primary"
+            data-bs-toggle="modal"
+            :data-bs-target="'#' + loginModalId"
+        >
             Войти
         </button>
-        <button class="btn btn-primary">
-            Зарегистрироваться
-        </button>
+        <button class="btn btn-primary">Зарегистрироваться</button>
     </div>
 </template>
 
 <style lang="scss"></style>
+@/api

@@ -5,82 +5,85 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Support\Collection;
+use Transliterator;
 
 use App\Models\User;
-
-use Transliterator;
+use DateTime;
+use DateTimeImmutable;
+use DateTimeInterface;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
  */
 class UserFactory extends Factory
 {
-    private static ?string $password_hash = null;
+    static private string $passwordHash;
+    
+    public function configure(): static
+    {
+        self::$passwordHash = Hash::make('123');
+        return $this->state(fn () => []);
+    }
 
     public function definition(): array
     {
-        if (self::$password_hash === null) {
-            self::$password_hash = Hash::make('123');
-        }
+        return array_merge(
+            [
+                'password' => self::$passwordHash,
+            ],
+            self::generateGenderFields(fake()->randomElement(['male', 'female']))
+        );
+    }
 
-        $transliterator = Transliterator::create('Russian-Latin/BGN');
+    public function gender($gender): Factory
+    {
+        return $this->state(fn () => self::generateGenderFields($gender));
+    }
 
-        $gender = fake()->randomElement(['male', 'female']);
-        $first_name = fake('ru_RU')->firstName($gender);
-        $last_name = fake('ru_RU')->lastName($gender);
+    static public function generateGenderFields($gender)
+    {
+        $firstName = fake('ru_RU')->firstName($gender);
+        $lastName = fake('ru_RU')->lastName($gender);
 
-        $login = implode('_', [$first_name, $last_name]);
-        $login = str_replace('ё', 'е', $login);
-        $login = str_replace('ь', '', $login);
-        $login = $transliterator->transliterate($login);
-        $login = strtolower($login);
-        $extraChar = '1';
-        while (User::where('login', $login)->count() > 0) {
-            $login .= $extraChar;
-            $extraChar += 1;
-        }
+        $username = self::generateUsername($firstName, $lastName);
+        // $email = self::generateEmail($username);
+        $email = fake()->unique()->safeEmail();
 
         return [
-            'login' => $login,
             'gender' => $gender,
-            'first_name' => $first_name,
-            'last_name' => $last_name,
+            'first_name' => $firstName,
+            'last_name' => $lastName,
             'patronymic' => null,
-            'email' => fake()->unique()->safeEmail(),
-            'password' => self::$password_hash,
+            'username' => $username,
+            'email' => $email,
         ];
     }
 
-    public function doctor(): Factory
-    {
-        return $this->state(
-            function (array $attributes) {
-                return [
-                    'role' => 'doctor',
-                ];
-            }
-        );
+    static public function generateUsername(
+        string $firstName,
+        string $lastName
+    ): string {
+        $transliterator = Transliterator::create('Russian-Latin/BGN');
+
+        $username = implode('_', [$firstName, $lastName]);
+        $username = str_replace('ё', 'е', $username);
+        $username = str_replace('ь', '', $username);
+        $username = $transliterator->transliterate($username);
+        $username = strtolower($username);
+        $extraChar = 1;
+        while (User::where('username', $username)->count() > 0) {
+            $username .= $extraChar;
+            $extraChar += 1;
+        }
+
+        return $username;
     }
 
-    public function nurse(): Factory
+    static public function generateEmail(string $username)
     {
-        return $this->state(
-            function (array $attributes) {
-                return [
-                    'role' => 'nurse',
-                ];
-            }
-        );
-    }
-
-    public function patient(): Factory
-    {
-        return $this->state(
-            function (array $attributes) {
-                return [
-                    'role' => 'patient',
-                ];
-            }
-        );
+        $email = fake()->email();
+        $host  = explode('@', $email)[1];
+        return $username . '@' . $host;
     }
 }
