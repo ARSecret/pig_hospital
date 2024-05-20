@@ -15,7 +15,7 @@ return new class extends Migration
             'case_records', function (Blueprint $table) {
                 $table->id();
                 $table->timestamps();
-                $table->date_time('datetime');
+                $table->dateTime('date_time');
                 $table->foreignId('patient_id')->constrained();
                 $table->foreignId('doctor_id')->constrained();
                 $table->text('text');

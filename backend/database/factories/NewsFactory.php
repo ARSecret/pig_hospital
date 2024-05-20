@@ -19,7 +19,7 @@ class NewsFactory extends Factory
         return [
             'title' => fake()->sentence(6, true),
             'text' => fake()->text(350),
-            'date' => fake()->date_timeBetween('-10 years', '-1 day'),
+            'date' => fake()->dateTimeBetween('-10 years', '-1 day'),
             'image_url' => fake()->imageUrl(),
         ];
     }

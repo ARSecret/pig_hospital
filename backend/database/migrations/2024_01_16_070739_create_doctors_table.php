@@ -17,6 +17,7 @@ return new class extends Migration
                 $table->foreignId('speciality_id')->constrained();
                 $table->boolean('active')->default(true);
                 $table->string('photo_url')->nullable();
+                $table->text('description');
                 $table->time('workday_start')->default('08:00');
                 $table->time('workday_end')->default('17:00');
                 $table->time('lunch_start')->default('13:00');

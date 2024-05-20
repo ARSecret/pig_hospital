@@ -1,15 +1,9 @@
 <script setup>
-import { computed, inject } from 'vue';
+import { inject } from 'vue';
+
+import { getDoctorImageUrl } from '@/functions';
 
 let { doctor } = defineProps(['doctor']);
-
-let imageUrl = computed(() => {
-    if (doctor.photoUrl) {
-        return doctor.photoUrl;
-    }
-
-    return `/default-doctor-${doctor.gender}.jpg`;
-});
 
 let api = inject('api');
 </script>
@@ -18,7 +12,7 @@ let api = inject('api');
     <div class="card">
         <div
             :style="{
-                'background-image': `url(${imageUrl})`,
+                'background-image': `url(${getDoctorImageUrl(doctor)})`,
             }"
             style="background-position: center; background-size: cover; --bs-aspect-ratio: 130%"
             alt=""
@@ -29,7 +23,7 @@ let api = inject('api');
             <p class="card-text text-nowrap">{{ doctor.speciality.name }}</p>
             <RouterLink
                 v-if="api.user"
-                :to="{ name: 'doctor-appointments', params: { doctorId: doctor.id } }"
+                :to="{ name: 'show-doctor', params: { id: doctor.id } }"
                 class="btn btn-primary"
             >
                 Подробнее

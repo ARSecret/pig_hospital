@@ -65,9 +65,8 @@ console.log(api.user.value);
         >
             Войти
         </button>
-        <button class="btn btn-primary">Зарегистрироваться</button>
+        <RouterLink :to="{ name: 'join' }" class="btn btn-primary">Зарегистрироваться</RouterLink>
     </div>
 </template>
 
 <style lang="scss"></style>
-@/api

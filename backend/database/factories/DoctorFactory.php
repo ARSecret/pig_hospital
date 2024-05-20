@@ -57,6 +57,7 @@ class DoctorFactory extends Factory
 
         return [
             'speciality_id' => Speciality::inRandomOrder()->first(),
+            'description' => fake()->text(256),
             'workday_start' => fake()->randomElement([
                 '06:00',
                 '06:30',

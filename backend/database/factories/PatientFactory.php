@@ -17,7 +17,7 @@ class PatientFactory extends Factory
     public function definition(): array
     {
         return [
-            'birthdate' => fake()->date_timeBetween('-100 years', '-18 years'),
+            'birthdate' => fake()->dateTimeBetween('-100 years', '-18 years'),
         ];
     }
 }

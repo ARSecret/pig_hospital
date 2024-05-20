@@ -30,7 +30,7 @@ class AppointmentFactory extends Factory
         return $this->state(
             function (array $attributes) {
                 do {
-                    $datetime = fake()->date_timeBetween('-10 years', 'yesterday');
+                    $datetime = fake()->dateTimeBetween('-10 years', 'yesterday');
                     $possibleDatetimes = $this->doctor->getPossibleAppointmentDatetimes($datetime);
                 } while (empty($possibleDatetimes));
 
@@ -47,7 +47,7 @@ class AppointmentFactory extends Factory
         return $this->state(
             function (array $attributes) {
                 do {
-                    $datetime = fake()->date_timeBetween('-10 years', 'yesterday');
+                    $datetime = fake()->dateTimeBetween('-10 years', 'yesterday');
                     $possibleDatetimes = $this->doctor->getPossibleAppointmentDatetimes($datetime);
                 } while (empty($possibleDatetimes));
 
@@ -67,7 +67,7 @@ class AppointmentFactory extends Factory
         return $this->state(
             function (array $attributes) {
                 do {
-                    $datetime = fake()->date_timeBetween('today', '+2 months');
+                    $datetime = fake()->dateTimeBetween('today', '+2 months');
                     $availableDatetimes = $this->doctor->getPossibleAppointmentDatetimes($datetime);
                 } while (empty($availableDatetimes));
 

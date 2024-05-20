@@ -1,20 +1,12 @@
-<script setup lang="ts">
-import { useApi } from '@/stores/api';
-import { ref } from 'vue';
-
-let api = useApi();
-
-let text = ref('');
-
-api.getAboutText().then(result => {
-    text.value = result;
-});
-</script>
+<script setup></script>
 
 <template>
-    {{ text }}
+    <p>Это сайт моей больницы!</p>
+    <p>
+        Здесь пациенты могут записываться на приёмы и на онлайн-консультации к нужным врачам, а
+        врачи могут отслеживать и пополнять истории болезней своих пациентов, а также следить за
+        расписанием приёмов.
+    </p>
 </template>
 
-<style lang="scss">
-</style>
-@/api
+<style lang="scss"></style>

@@ -149,6 +149,9 @@ export class Api {
         await this.#axios.post('logout');
         this.user.value = null;
     }
+
+    async join() {
+    }
 }
 
 // /**

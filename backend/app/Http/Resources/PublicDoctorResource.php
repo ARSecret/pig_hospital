@@ -24,6 +24,7 @@ class PublicDoctorResource extends JsonResource
             ],
             'gender' => $this->gender,
             'photoUrl' => $this->photo_url ? asset($this->photo_url) : null,
+            'description' => $this->description,
         ];
     }
 }
