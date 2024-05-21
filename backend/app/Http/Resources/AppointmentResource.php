@@ -17,15 +17,16 @@ class AppointmentResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'date_time' => $this->date_time->format(DateTime::ISO8601),
+            'dateTime' => $this->date_time->format(DateTime::ISO8601),
             'status' => $this->status,
-            'prettyStatus' => $this->pretty_status,
+            'prettyStatus' => $this->status,
             'canBeCancelled' => $this->canBeCancelled(),
             'canBeConfirmed' => $this->canBeConfirmed(),
             'canBeFinished' => $this->canBeFinished(),
             'patient' => [
                 'id' => $this->patient->id,
                 'fullName' => $this->patient->full_name,
+                'age' => $this->patient->getAge(),
             ],
             'doctor' => [
                 'id' => $this->doctor->id,

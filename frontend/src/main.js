@@ -7,14 +7,15 @@ import App from './App.vue';
 import router from './router';
 import { Api } from '@/api';
 
+import Pusher from 'pusher-js';
 import Echo from 'laravel-echo';
 
-window.Pusher = require('pusher-js');
-window.Echo = new Echo({
+let echo = new Echo({
     broadcaster: 'pusher',
-    key: process.env.MIX_PUSHER_APP_KEY,
-    cluster: process.env.MIX_PUSHER_APP_CLUSTER,
-    forceTLS: true
+    key: '48e6c4042b5829fecd9f',
+    cluster: 'eu',
+    forceTLS: true,
+    authEndpoint: 'http://localhost:8000/broadcasting/auth',
 });
 
 const app = createApp(App);
@@ -24,13 +25,14 @@ let api = new Api();
 app.use(createPinia());
 app.use(router);
 app.provide('api', api);
+app.provide('echo', echo);
 
 router.beforeEach(async (route) => {
     if (route.meta.allowedRoles) {
         await api.userLoaded;
 
-        if (!api.user || !route.meta.allowedRoles.includes(api.user.role)) {
-            console.log('Redirecting... :', api.user);
+        if (!api.user.value || !route.meta.allowedRoles.includes(api.user.value.role)) {
+            console.log('Redirecting... :', api.user.value);
             return { name: 'home' };
         }
 

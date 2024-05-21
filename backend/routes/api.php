@@ -29,7 +29,7 @@ use App\Models\Patient;
 |
 */
 
-Route::middleware('auth:sanctum')->get(
+Route::middleware('auth')->get(
     '/user',
     function (Request $request) {
         $concrete = $request->user()->concrete;
@@ -66,6 +66,7 @@ Route::controller(PatientController::class)->group(
         Route::get('/patients/{patient}', 'show');
         Route::get('/patients/{patient}/case-records', 'indexCaseRecords');
         Route::post('/patients/{patient}/case-records', 'storeCaseRecord');
+        Route::get('/patients/{patient}/appointments', 'indexAppointments');
     }
 );
 
@@ -75,6 +76,7 @@ Route::controller(DoctorController::class)->group(
         Route::get('/doctors/{doctor}', 'show');
         Route::get('/doctors/{doctor}/patients', 'indexPatients');
         Route::get('/doctors/{doctor}/available-appointment-times', 'indexAvailableAppointmentTimes');
+        Route::get('/doctors/{doctor}/appointments', 'indexAppointments');
     }
 );
 
@@ -82,8 +84,6 @@ Route::controller(AppointmentController::class)
     ->middleware('auth')
     ->group(
         function () {
-            Route::get('/patients/{patient}/appointments', 'indexPatient');
-            Route::get('/doctors/{doctor}/appointments', 'indexDoctor');
             Route::post('/doctors/{doctor}/appointments', 'store');
             Route::delete('/appointments/{appointment}', 'destroy');
             Route::patch('/appointments/{appointment}/confirm', 'confirm');

@@ -1,21 +1,21 @@
-<script setup lang="ts">
-import { type Ref, ref, watch } from 'vue';
+<script setup>
+import { ref, watch, inject } from 'vue';
 
-import { useApi, type Speciality } from '@/stores/api';
-import { useRoute } from 'vue-router';
+import { RouterLink } from 'vue-router';
 
 import NotFound from '@/components/NotFound.vue';
 
-let api = useApi();
+let api = inject('api');
 
-let appointments: Ref<any> = ref(undefined);
-let date = ref(new Date);
+let appointments = ref(undefined);
+let date = ref(new Date());
 let dateString = ref(date.value.toISOString().split('T')[0]);
 
+console.log('User:', api.user.value);
 
 async function reloadData() {
     appointments.value = undefined;
-    appointments.value = await api.getDoctorAppointments(api.user.doctor.id, date.value);
+    appointments.value = await api.getDoctorAppointments(api.user.value.doctorId, date.value);
     console.log(appointments.value);
 }
 reloadData();
@@ -26,8 +26,7 @@ watch(dateString, (newDateString) => {
     reloadData();
 });
 
-
-function getDoctorImageUrl(doctor: any): string {
+function getDoctorImageUrl(doctor) {
     if (doctor.photo_url) {
         return doctor.photo_url;
     }
@@ -39,14 +38,13 @@ function removeSpecialityFilter() {
     let url = new URL(document.location.href);
     url.searchParams.delete('speciality_id');
     document.location.href = url.href;
-
 }
 
 // function addAppointment(datetimeString: string) {
 //     api.addDoctorAppointment(doctor.value.id, new Date(datetimeString));
 // }
 
-function getAppointmentStatus(appointment: any) {
+function getAppointmentStatus(appointment) {
     switch (appointment.status) {
         case 'created':
             return 'Добавлена';
@@ -57,10 +55,9 @@ function getAppointmentStatus(appointment: any) {
     }
 }
 
-function confirmAppointment(id: string) {
+function confirmAppointment(id) {
     api.confirmAppointment(id);
 }
-
 </script>
 
 <template>
@@ -68,22 +65,28 @@ function confirmAppointment(id: string) {
     <div v-else>
         <h3>Мои записи на прием</h3>
 
-        <h4>Записи на <input type="date" v-model="dateString">:</h4>
-        <div v-if="!appointments.length">
-            Пусто!
-        </div>
+        <h4>Записи на <input type="date" v-model="dateString" />:</h4>
+        <div v-if="!appointments.length">Пусто!</div>
         <div v-else>
             <div class="row g-4">
-                <div v-for="appointment in appointments" class="col-xs-12">
+                <div v-for="appointment in appointments" :key="appointment.id" class="col-xs-12">
                     <div class="card d-flex">
                         <div class="card-body">
-                            <h5 class="card-title">{{ new Date(appointment.datetime).toLocaleTimeString() }}</h5>
-                            <p class="card-text">{{ appointment.patient.full_name }} ({{ appointment.patient.age }})</p>
+                            <h5 class="card-title">
+                                {{ new Date(appointment.dateTime).toLocaleTimeString() }}
+                            </h5>
+                            <p class="card-text">
+                                {{ appointment.patient.fullName }} ({{ appointment.patient.age }})
+                            </p>
                             <p class="card-text">{{ getAppointmentStatus(appointment) }}</p>
                             <div class="row g-3">
                                 <div class="col d-grid" v-if="appointment.status == 'created'">
-                                    <button class="btn btn-secondary pull-right"
-                                        @click="confirmAppointment(appointment.id)">Подтвердить</button>
+                                    <button
+                                        class="btn btn-secondary pull-right"
+                                        @click="confirmAppointment(appointment.id)"
+                                    >
+                                        Подтвердить
+                                    </button>
                                 </div>
                                 <div class="col d-grid" v-if="appointment.status == 'confirmed'">
                                     <button class="btn btn-success">Завершено</button>
@@ -93,6 +96,9 @@ function confirmAppointment(id: string) {
                                 </div>
                                 <div class="col d-grid" v-if="appointment.status == 'confirmed'">
                                     <button class="btn btn-danger">Отменить</button>
+                                </div>
+                                <div v-if="appointment.status == 'confirmed'" class="col d-grid">
+                                    <RouterLink :to="{ name: 'video-call', params: { doctorId: api.user.value.doctorId }}" class="btn btn-secondary">Онлайн</RouterLink>
                                 </div>
                             </div>
                         </div>

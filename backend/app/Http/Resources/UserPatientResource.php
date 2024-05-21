@@ -17,6 +17,7 @@ class UserPatientResource extends JsonResource
         return array_merge(
             (new UserResource($this->user))->toArray($request),
             [
+                'patientId' => $this->id,
                 'role' => 'patient',
                 'gender' => $this->user->gender,
                 'birthdate' => $this->birthdate,

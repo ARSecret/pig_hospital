@@ -17,12 +17,14 @@ class UserDoctorResource extends JsonResource
         return array_merge(
             (new UserResource($this->user))->toArray($request),
             [
+                'doctorId' => $this->id,
                 'role' => 'doctor',
                 'speciality' => [
                     'id' => $this->speciality->id,
                     'name' => $this->speciality->name,
                 ],
-                'photoUrl' => $this->photo_url ? asset($this->photo_url) : null,            ]
+                'photoUrl' => $this->photo_url ? asset($this->photo_url) : null,
+            ]
         );
     }
 }

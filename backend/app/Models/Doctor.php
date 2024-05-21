@@ -84,8 +84,8 @@ class Doctor extends Model
     {
         $unavailableDatetimes = $this->appointments()
             ->whereIn('status', ['confirmed', 'successful'])
-            ->whereDate('datetime', $date)
-            ->pluck('datetime')
+            ->whereDate('date_time', $date)
+            ->pluck('date_time')
             ->map(fn ($datetimeString) => new DateTime($datetimeString))
             ->toArray();
         $availableDatetimes = $this->getPossibleAppointmentDatetimes($date);
@@ -106,9 +106,9 @@ class Doctor extends Model
     public function addAppointment(Patient $patient, DateTime $datetime): Appointment | null
     {
         $availableAppointments = $this->getAvailableAppointmentDatetimes($datetime);
-        if (!in_array($datetime, $availableAppointments)) {
-            return null;
-        }
+        // if (!in_array($datetime, $availableAppointments)) {
+        //     return null;
+        // }
 
         $appointment = new Appointment;
         $appointment->patient()->associate($patient);

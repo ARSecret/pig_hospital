@@ -25,8 +25,7 @@ class DoctorPolicy
 
     public function viewAppointments(User $user, Doctor $doctor): bool
     {
-        return $user->doctor == $doctor 
-            || ($user->nurse && $user->nurse->doctor == $doctor);
+        return $user->concrete == $doctor;
     }
 
     public function viewAvailableAppointments(User $user): bool

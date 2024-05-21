@@ -101,6 +101,56 @@ export class Api {
         }
     }
 
+    async #delete(url, data = undefined, expectedErrorStatus = null) {
+        try {
+            const response = await this.#axios.delete(API_PREFIX + '/' + url, data);
+            return true;
+        } catch (error) {
+            if (error.response) {
+                switch (error.response.status) {
+                    case expectedErrorStatus:
+                        return null;
+                    case 500:
+                        this.onServerError && this.onServerError();
+                        return null;
+                    default:
+                        this.onUnknownError && this.onUnknownError();
+                        return null;
+                }
+            } else if (error.request) {
+                this.onConnectionError && this.onConnectionError();
+                return null;
+            } else {
+                throw error;
+            }
+        }
+    }
+
+    async #patch(url, data = undefined, expectedErrorStatus = null) {
+        try {
+            const response = await this.#axios.patch(API_PREFIX + '/' + url, data);
+            return true;
+        } catch (error) {
+            if (error.response) {
+                switch (error.response.status) {
+                    case expectedErrorStatus:
+                        return null;
+                    case 500:
+                        this.onServerError && this.onServerError();
+                        return null;
+                    default:
+                        this.onUnknownError && this.onUnknownError();
+                        return null;
+                }
+            } else if (error.request) {
+                this.onConnectionError && this.onConnectionError();
+                return null;
+            } else {
+                throw error;
+            }
+        }
+    }
+
     /**
      * Fetches a doctor with the given id
      * @param {number} doctorId
@@ -112,6 +162,18 @@ export class Api {
 
     async getDoctors(specialityId = null) {
         return await this.#get('doctors', { specialityId });
+    }
+
+    async getDoctorAvailableAppointmentTimes(doctorId, date) {
+        return await this.#get(`doctors/${doctorId}/available-appointment-times`, { date });
+    }
+
+    async getDoctorAppointments(doctorId, date) {
+        return await this.#get(`doctors/${doctorId}/appointments`, { date });
+    }
+
+    async addDoctorAppointment(doctorId, dateTime) {
+        await this.#post(`doctors/${doctorId}/appointments`, { dateTime });
     }
 
     async getNews() {
@@ -126,6 +188,14 @@ export class Api {
         return await this.#get('specialities');
     }
 
+    async getPatientAppointments(patientId, date) {
+        return await this.#get(`patients/${patientId}/appointments`, { date });
+    }
+
+    async confirmAppointment(appointmentId) {
+        return await this.#patch(`appointments/${appointmentId}/confirm`);
+    }
+
     async logIn(username, password) {
         console.log('Log in attempt...');
         const csrfResponse = await this.#axios.get('sanctum/csrf-cookie');
@@ -137,7 +207,7 @@ export class Api {
         }
 
         console.log('Successfully logged in');
-        this.user.value = this.#get('user');
+        this.user.value = await this.#get('user');
         return true;
     }
 
@@ -146,12 +216,16 @@ export class Api {
             return;
         }
 
-        await this.#axios.post('logout');
+        await this.#delete('auth/log-out');
         this.user.value = null;
     }
 
-    async join() {
+    async getAgoraToken() {
+        let response = await this.#axios.get('agora/token');
+        return response.data;
     }
+
+    async join() {}
 }
 
 // /**

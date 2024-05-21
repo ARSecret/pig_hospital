@@ -42,7 +42,7 @@ class PatientController extends Controller
             ]
         );
 
-        $appointments = $patient->appointments()->whereDate('datetime', $request->date)->get()->sortBy('datetime');
+        $appointments = $patient->appointments()->whereDate('date_time', $request->date)->get()->sortBy('date_time');
         if ($request->status) {
             $appointments = $appointments->where('status', $request->status);
         }

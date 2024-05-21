@@ -74,9 +74,9 @@ class DoctorController extends Controller
 
         return AppointmentResource::collection(
             $doctor->appointments()
-                ->whereDate('datetime', $request->date)
+                ->whereDate('date_time', $request->date)
                 ->get()
-                ->sortBy('datetime')
+                ->sortBy('date_time')
         );
     }
 

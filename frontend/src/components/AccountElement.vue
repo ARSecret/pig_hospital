@@ -1,13 +1,15 @@
 <script setup>
 import { inject } from 'vue';
-import { RouterLink } from 'vue-router';
+import { RouterLink, useRouter } from 'vue-router';
 
 function logout() {
     api.logOut();
     console.log('Logged out');
+    router.push({ name: 'home' });
 }
 
 let api = inject('api');
+let router = useRouter();
 let user = api.user;
 
 defineProps(['loginModalId']);

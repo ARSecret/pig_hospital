@@ -23,15 +23,15 @@ class AppointmentController extends Controller
 
         $request->validate(
             [
-                'datetime' => ['required', 'date'],
+                'dateTime' => ['required', 'date'],
             ]
         );
 
-        $datetime = new DateTime($request->datetime);
+        $datetime = new DateTime($request->dateTime);
 
         $result = $doctor->addAppointment(
-            $request->user()->patient,
-            new DateTime($request->datetime),
+            $request->user()->concrete,
+            new DateTime($request->dateTime),
         );
         if (!$result) {
             abort(400, 'Invalid appointment datetime');
@@ -58,15 +58,15 @@ class AppointmentController extends Controller
     {
         $this->authorize('update', $appointment);
 
-        if ($appointment->status != 'created') {
+        if ($appointment->status != AppointmentStatus::Created) {
             abort(400, 'Cannot confirm this appointment');
         }
 
         $appointment->status = 'confirmed';
         $appointment->save();
 
-        Appointment::whereDate('datetime', $appointment->date_time)
-            ->whereTime('datetime', $appointment->date_time)
+        Appointment::whereDate('date_time', $appointment->date_time)
+            ->whereTime('date_time', $appointment->date_time)
             ->whereNot('id', $appointment->id)
             ->each(function ($appointment) {
                 $appointment->status = 'cancelled';

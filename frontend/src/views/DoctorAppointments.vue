@@ -1,16 +1,15 @@
-<script setup lang="ts">
-import { type Ref, ref, watch } from 'vue';
+<script setup>
+import { ref, watch, inject } from 'vue';
 
-import { useApi, type Speciality } from '@/stores/api';
 import { useRoute, useRouter } from 'vue-router';
 
 import NotFound from '@/components/NotFound.vue';
 
-let api = useApi();
+let api = inject('api');
 
-let doctor: Ref<any> = ref(undefined);
-let availableAppointmentTimes: Ref<any> = ref(undefined);
-let date = ref(new Date);
+let doctor = ref(undefined);
+let availableAppointmentTimes = ref(undefined);
+let date = ref(new Date());
 date.value.setDate(date.value.getDate() + 1);
 let dateString = ref(date.value.toISOString().split('T')[0]);
 console.log('initial:', dateString.value);
@@ -18,20 +17,21 @@ console.log('initial:', dateString.value);
 let route = useRoute();
 let router = useRouter();
 
-
 async function reloadData() {
     doctor.value = undefined;
     availableAppointmentTimes.value = undefined;
 
+    let doctorId = route.params.doctorId;
 
-    let doctorId = route.params.doctorId as string;
-    
     doctor.value = await api.getDoctor(doctorId);
     if (doctor.value === null) {
         return;
     }
 
-    availableAppointmentTimes.value = await api.getDoctorAvailableAppointments(doctorId, date.value);
+    availableAppointmentTimes.value = await api.getDoctorAvailableAppointmentTimes(
+        doctorId,
+        date.value,
+    );
     console.log(availableAppointmentTimes.value);
 }
 reloadData();
@@ -42,8 +42,7 @@ watch(dateString, (newDateString) => {
     reloadData();
 });
 
-
-function getDoctorImageUrl(doctor: any): string {
+function getDoctorImageUrl(doctor) {
     if (doctor.photo_url) {
         return doctor.photo_url;
     }
@@ -55,10 +54,9 @@ function removeSpecialityFilter() {
     let url = new URL(document.location.href);
     url.searchParams.delete('speciality_id');
     document.location.href = url.href;
-    
 }
 
-function addAppointment(datetimeString: string) {
+function addAppointment(datetimeString) {
     api.addDoctorAppointment(doctor.value.id, datetimeString);
     console.log('added appointment');
     let dateString = datetimeString.split('T')[0];
@@ -69,34 +67,40 @@ function addAppointment(datetimeString: string) {
         },
     });
 }
-
 </script>
 
 <template>
-<NotFound v-if="doctor === null"></NotFound>
-<div v-else-if="doctor === undefined">Loading...</div>
-<div v-else>
-    <h3>{{ doctor.full_name }}</h3>
-    <h4 class="text-capitalize">{{ doctor.speciality.name }}</h4>
-    
-    <h4>Доступное время для записи на <input type="date" v-model="dateString">:</h4>
-    <div v-if="availableAppointmentTimes === undefined">Loading...</div>
-    <div v-else-if="!availableAppointmentTimes.length">
-        Пусто!
-    </div>
+    <NotFound v-if="doctor === null"></NotFound>
+    <div v-else-if="doctor === undefined">Loading...</div>
     <div v-else>
-        <div class="row g-4">
-            <div v-for="time in availableAppointmentTimes" class="col-xs-12 col-md-6 col-lg-4">
-                <div class="card">
-                    <div class="card-body ">
-                        <h5 class="card-title">{{ new Date(time).toLocaleTimeString() }}</h5>
-                        <button class="btn btn-primary pull-right" @click="addAppointment(time)">Записаться</button>
+        <h3>{{ doctor.full_name }}</h3>
+        <h4 class="text-capitalize">{{ doctor.speciality.name }}</h4>
+
+        <h4>Доступное время для записи на <input type="date" v-model="dateString" />:</h4>
+        <div v-if="availableAppointmentTimes === undefined">Loading...</div>
+        <div v-else-if="!availableAppointmentTimes.length">Пусто!</div>
+        <div v-else>
+            <div class="row g-4">
+                <div
+                    v-for="time in availableAppointmentTimes"
+                    :key="time"
+                    class="col-xs-12 col-md-6 col-lg-4"
+                >
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ new Date(time).toLocaleTimeString() }}</h5>
+                            <button
+                                class="btn btn-primary pull-right"
+                                @click="addAppointment(time)"
+                            >
+                                Записаться
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 </template>
 
 <style lang="scss"></style>

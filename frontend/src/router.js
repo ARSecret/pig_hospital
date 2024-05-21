@@ -20,6 +20,14 @@ const router = createRouter({
             component: import('@/views/ShowDoctorView.vue'),
         },
         {
+            path: '/doctors/:doctorId/video',
+            name: 'video-call',
+            component: import('@/views/VideoCallView.vue'),
+            meta: {
+                allowedRoles: ['patient', 'doctor'],
+            },
+        },
+        {
             path: '/doctors/:doctorId/appointments',
             name: 'doctor-appointments',
             component: () => import('@/views/DoctorAppointments.vue'),
@@ -27,14 +35,14 @@ const router = createRouter({
                 allowedRoles: ['patient'],
             },
         },
-        // {
-        //     path: '/my-appointments',
-        //     name: 'my-appointments',
-        //     component: () => import('@/views/DoctorMyAppointments.vue'),
-        //     meta: {
-        //         allowedRoles: ['doctor'],
-        //     },
-        // },
+        {
+            path: '/my-appointments',
+            name: 'my-appointments',
+            component: () => import('@/views/DoctorMyAppointments.vue'),
+            meta: {
+                allowedRoles: ['doctor'],
+            },
+        },
         {
             path: '/patient/appointments',
             name: 'patient-appointments',
@@ -66,14 +74,14 @@ const router = createRouter({
                 allowedRoles: ['patient', 'doctor', 'nurse'],
             },
         },
-        // {
-        //     path: '/patients',
-        //     name: 'my-patients',
-        //     component: MyPatientsView,
-        //     meta: {
-        //         allowedRoles: ['doctor'],
-        //     },
-        // },
+        {
+            path: '/patients',
+            name: 'my-patients',
+            component: import('@/views/DoctorPatientsView.vue'),
+            meta: {
+                allowedRoles: ['doctor'],
+            },
+        },
         // {
         //     path: '/patients/:patientId/case-records',
         //     name: 'case-records',
