@@ -16,3 +16,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('phpinfo', function () {
     return phpinfo();
 });
+
+Route::group(['middleware' => ['auth']], function () {
+    Route::get('/agora-chat', 'App\Http\Controllers\AgoraVideoController@index');
+    Route::post('/agora/token', 'App\Http\Controllers\AgoraVideoController@token');
+    Route::post('/agora/call-user', 'App\Http\Controllers\AgoraVideoController@callUser');
+});
