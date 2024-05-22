@@ -5,7 +5,9 @@ let api = inject('api');
 
 let patients = ref([]);
 
-api.getAllDoctorPatients().then((result) => {
+api.getDoctorPatients(api.user.value.doctorId).then((result) => {
+    console.log('DoctorId:', api.user.value.doctorId);
+    console.log('Patients:', result);
     patients.value = result;
 });
 </script>
@@ -31,13 +33,9 @@ api.getAllDoctorPatients().then((result) => {
         <div v-for="patient in patients" :key="patient.id" class="col">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title text-nowrap">{{ patient.full_name }}</h5>
+                    <h5 class="card-title text-nowrap">{{ patient.fullName }}</h5>
                     <p class="card-text text-nowrap">{{ patient.birthdate }}</p>
-                    <RouterLink
-                        :to="{ name: 'case-records', params: { patientId: patient.id } }"
-                        class="btn btn-primary d-flex"
-                        >История болезни</RouterLink
-                    >
+                    
                 </div>
             </div>
         </div>

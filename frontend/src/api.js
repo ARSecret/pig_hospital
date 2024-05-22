@@ -176,6 +176,10 @@ export class Api {
         await this.#post(`doctors/${doctorId}/appointments`, { dateTime });
     }
 
+    async getDoctorPatients(doctorId) {
+        return await this.#get(`doctors/${doctorId}/patients`);
+    }
+
     async getNews() {
         return await this.#get('news');
     }
