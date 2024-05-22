@@ -1,37 +1,85 @@
 <script setup>
-import { inject } from 'vue';
+import { inject, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 
 let route = useRoute();
 let doctorId = route.params.doctorId;
 let api = inject('api');
 
+let doctor = ref(null);
+if (api.user.value.role == 'doctor') {
+    doctor.value = api.user.value;
+} else {
+    api.getDoctor(doctorId).then((result) => {
+        doctor.value = result;
+    });
+}
+
+let selfVideoTrack = null;
+let remoteVideoTrack = null;
+let selfAudioTrack = null;
+let remoteAudioTrack = null;
+
 async function setupVideo() {
     let client = AgoraRTC.createClient({ mode: 'rtc', codec: 'h264' });
-    await client.join('d05bb914683249898c339680aaf6a4c7', `channel-${doctorId}`, null, null);
-    let audioTrack = await AgoraRTC.createMicrophoneAudioTrack({
+    client.on('user-left', async (user) => {
+        remoteVideoTrack.stop();
+        remoteAudioTrack.stop();
+        if (api.user.value.role == 'patient') {
+            document.querySelector('#doctor-player').innerHtml = '';
+        } else {
+            document.querySelector('#patient-player').innerHtml = '';
+        }
+    });
+    client.on('user-published', async (user, mediaType) => {
+        await client.subscribe(user, mediaType);
+        if (mediaType == 'video') {
+            remoteVideoTrack = user.videoTrack;
+            if (api.user.value.role == 'patient') {
+                remoteVideoTrack.play(document.querySelector('#doctor-player'));
+            } else {
+                remoteVideoTrack.play(document.querySelector('#patient-player'));
+            }
+        }
+        if (mediaType == 'audio') {
+            remoteAudioTrack = user.audioTrack;
+            remoteAudioTrack.play();
+        }
+    });
+    await client.join(
+        'd05bb914683249898c339680aaf6a4c7',
+        `channel-${doctorId}`,
+        '007eJxTYGA0kXCsit7p8l/A787kbx5LNxopnDNaHsFjacctqNcq2KjAkGJgmpRkaWhiZmFsZGJpYWmRbGxsaWZhkJiYZpZokmz+r9A3rSGQkcHBVI2ZkQECQXxOhuSMxLy81BxdQwYGAIxqHB8=',
+        api.user.value.id,
+    );
+    selfVideoTrack = await AgoraRTC.createCameraVideoTrack({});
+    if (api.user.value.role == 'doctor') {
+        selfVideoTrack.play(document.querySelector('#doctor-player'));
+    } else {
+        selfVideoTrack.play(document.querySelector('#patient-player'));
+    }
+    selfAudioTrack = await AgoraRTC.createMicrophoneAudioTrack({
         encoderConfig: 'music_standard',
     });
-    let videoTrack = await AgoraRTC.createCameraVideoTrack({
-        encoderConfig: '480p_1',
-    });
-    videoTrack.play('doctor-video');
-    await client.publish([
-        videoTrack,
-        audioTrack,
-    ]);
+    await client.publish([selfVideoTrack, selfAudioTrack]);
 }
-setupVideo();
+onMounted(() => {
+    setupVideo();
+});
 </script>
 
 <template>
     <div class="container">
         <div class="row">
             <div class="col-6">
-                <div id="patient-video" style="height: 500px"></div>
+                <div id="doctor-player" class="shadow" style="height: 500px"></div>
+                <h3 v-if="doctor" id="doctor-title" class="text-center">
+                    {{ doctor.fullName }} ({{ doctor.speciality.name }})
+                </h3>
             </div>
             <div class="col-6">
-                <div id="doctor-video" style="height: 500px"></div>
+                <div id="patient-player" class="shadow" style="height: 500px"></div>
+                <h3 id="patient-title" class="text-center">Пациент</h3>
             </div>
         </div>
     </div>

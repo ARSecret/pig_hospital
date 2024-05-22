@@ -1,22 +1,50 @@
 <script setup>
 import { ref, inject } from 'vue';
+import { useRouter } from 'vue-router';
 
 let email = ref('');
 let firstName = ref('');
 let lastName = ref('');
 let patronymic = ref('');
-let gender = ref('');
+let gender = ref('male');
+let password = ref('');
+let username = ref('');
 
 let api = inject('api');
+let router = useRouter();
 
-function submit() {
-
+async function submit() {
+    let result = await api.join(
+        username.value,
+        email.value,
+        firstName.value,
+        lastName.value,
+        patronymic.value,
+        password.value,
+        gender.value,
+    );
+    if (!result) {
+        alert('Не удалось зарегистрироваться!');
+        return;
+    }
+    router.push({ name: 'home' });
 }
 </script>
 
 <template>
     <h1>Регистрация</h1>
     <form action="" class="border row p-4" @submit.prevent="submit">
+        <div class="col-12 mb-4">
+            <label for="username" class="form-label">Имя пользователя</label>
+            <input
+                id="username"
+                v-model="username"
+                type="text"
+                name=""
+                class="form-control"
+                required
+            />
+        </div>
         <div class="col-12 mb-4">
             <label for="email" class="form-label">Электронная почта</label>
             <input id="email" v-model="email" type="email" name="" class="form-control" required />
@@ -36,7 +64,14 @@ function submit() {
             </div>
             <div class="col-12 col-md-4">
                 <label for="last-name" class="form-label">Фамилия</label>
-                <input id="last-name" type="text" name="" class="form-control" required />
+                <input
+                    id="last-name"
+                    v-model="lastName"
+                    type="text"
+                    name=""
+                    class="form-control"
+                    required
+                />
             </div>
             <div class="col-12 col-md-4">
                 <label for="patronymic" class="form-label">Отчество</label>
@@ -75,6 +110,18 @@ function submit() {
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div class="col-12 mb-4">
+            <label for="password" class="form-label">Пароль</label>
+            <input
+                id="password"
+                v-model="password"
+                type="password"
+                name=""
+                class="form-control"
+                required
+            />
         </div>
 
         <div class="col-12">

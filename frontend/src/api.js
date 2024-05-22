@@ -225,7 +225,20 @@ export class Api {
         return response.data;
     }
 
-    async join() {}
+    async join(username, email, firstName, lastName, patronymic, password, gender) {
+        return await this.#post(
+            'auth/join',
+            {
+                email,
+                username,
+                firstName,
+                lastName,
+                password,
+                gender,
+            },
+            422,
+        );
+    }
 }
 
 // /**

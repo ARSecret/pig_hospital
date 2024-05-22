@@ -19,6 +19,10 @@ class Patient extends Model
 
     public $timestamps = false;
 
+    protected $fillable = [
+        'birthdate',
+    ];
+
     public function appointments(): HasMany
     {
         return $this->hasMany(Appointment::class);

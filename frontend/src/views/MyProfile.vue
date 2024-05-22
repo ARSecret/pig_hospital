@@ -1,8 +1,7 @@
-<script setup lang="ts">
-import { useApi } from '@/stores/api';
-import { computed, ref, type Ref } from 'vue';
+<script setup>
+import { computed, ref, inject } from 'vue';
 
-let api = useApi();
+let api = inject('api');
 
 let role = computed(() => {
     switch (api.user.role) {
@@ -18,8 +17,7 @@ let role = computed(() => {
 
 <template>
     <div v-if="api.user">
-        Вы: {{ role }} {{ api.user.full_name }}<br>
-        Ваш логин: {{ api.user.login }}
+        Вы: {{ role }} {{ api.user.value.fullName }}<br>
+        Ваш логин: {{ api.user.value.username }}
     </div>
 </template>
-@/api

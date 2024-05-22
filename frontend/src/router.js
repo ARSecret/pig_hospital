@@ -7,22 +7,22 @@ const router = createRouter({
         {
             path: '/',
             name: 'home',
-            component: import('@/views/HomeView.vue'),
+            component: () => import('@/views/HomeView.vue'),
         },
         {
             path: '/doctors',
             name: 'doctors',
-            component: import('@/views/IndexDoctorsView.vue'),
+            component: () => import('@/views/IndexDoctorsView.vue'),
         },
         {
             path: '/doctors/:id',
             name: 'show-doctor',
-            component: import('@/views/ShowDoctorView.vue'),
+            component: () => import('@/views/ShowDoctorView.vue'),
         },
         {
             path: '/doctors/:doctorId/video',
             name: 'video-call',
-            component: import('@/views/VideoCallView.vue'),
+            component: () => import('@/views/VideoCallView.vue'),
             meta: {
                 allowedRoles: ['patient', 'doctor'],
             },
@@ -77,7 +77,7 @@ const router = createRouter({
         {
             path: '/patients',
             name: 'my-patients',
-            component: import('@/views/DoctorPatientsView.vue'),
+            component: () => import('@/views/DoctorPatientsView.vue'),
             meta: {
                 allowedRoles: ['doctor'],
             },

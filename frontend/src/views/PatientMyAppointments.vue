@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch, inject } from 'vue';
 
-import { useRoute } from 'vue-router';
+import { useRoute, RouterLink } from 'vue-router';
 
 import NotFound from '@/components/NotFound.vue';
 
@@ -43,7 +43,7 @@ async function cancelAppointment(appointmentId) {
                     <div class="card d-flex">
                         <div class="card-body">
                             <h5 class="card-title">
-                                {{ new Date(appointment.date_time).toLocaleTimeString() }}
+                                {{ new Date(appointment.dateTime).toLocaleTimeString() }}
                             </h5>
                             <p class="card-text">
                                 <RouterLink
@@ -65,6 +65,16 @@ async function cancelAppointment(appointmentId) {
                                     @click="cancelAppointment(appointment.id)"
                                 >
                                     <button class="btn btn-danger">Отменить</button>
+                                </div>
+                                <div v-if="appointment.status == 'confirmed'">
+                                    <RouterLink
+                                        class="btn btn-primary"
+                                        :to="{
+                                            name: 'video-call',
+                                            params: { doctorId: appointment.doctor.id },
+                                        }"
+                                        >Комната видеосвязи</RouterLink
+                                    >
                                 </div>
                             </div>
                         </div>

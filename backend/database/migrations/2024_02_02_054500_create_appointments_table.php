@@ -22,7 +22,8 @@ return new class extends Migration
                 $table->foreignId('doctor_id');
                 $table->enum(
                     'status',
-                    AppointmentStatus::cases()
+                    array_map(
+                        fn ($case) => $case->value, AppointmentStatus::cases())
                 )->default(AppointmentStatus::Created);
                 $table->boolean('is_online')->default(false);
             }
