@@ -73,7 +73,7 @@ function addNewCaseRecord(event) {
         </div>
         <div v-else>
             <h3>Пациент {{ patient.fullName }}</h3>
-            <h4 class="mb-3">Возраст {{ patient.age }}</h4>
+            <h4 class="mb-3">Возраст {{ patient.age }} ({{ patient.birthdate }})</h4>
         </div>
         <div v-if="!caseRecordsLoaded">
             <div class="row g-4">

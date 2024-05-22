@@ -52,7 +52,7 @@ class PatientController extends Controller
     public function indexCaseRecords(Request $request, Patient $patient) {
         $this->authorize('viewCaseRecords', $patient);
 
-        return CaseRecordResource::collection($patient->case_records->sortBy('datetime', descending: true));
+        return CaseRecordResource::collection($patient->case_records->sortBy('date_time', descending: true));
     }
 
     public function storeCaseRecord(Request $request, Patient $patient) {
