@@ -15,7 +15,10 @@ let dateString = ref(route.query.date || new Date().toISOString().split('T')[0])
 
 async function reloadData() {
     appointments.value = undefined;
-    appointments.value = await api.getPatientAppointments(api.user.value.id, dateString.value);
+    appointments.value = await api.getPatientAppointments(
+        api.user.value.patientId,
+        dateString.value,
+    );
     console.log('Appointments:', appointments.value);
 }
 reloadData();

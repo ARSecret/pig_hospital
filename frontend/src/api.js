@@ -192,6 +192,14 @@ export class Api {
         return await this.#get(`patients/${patientId}/appointments`, { date });
     }
 
+    async getPatient(patientId) {
+        return await this.#get(`patients/${patientId}`);
+    }
+
+    async getPatientCaseRecords(patientId) {
+        return await this.#get(`patients/${patientId}/case-records`);
+    }
+
     async confirmAppointment(appointmentId) {
         return await this.#patch(`appointments/${appointmentId}/confirm`);
     }

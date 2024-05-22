@@ -53,6 +53,16 @@ console.log(api.user.value);
                         >Мои записи
                     </RouterLink>
                 </li>
+
+                <li>
+                    <RouterLink
+                        v-if="user.role == 'patient'"
+                        :to="{ name: 'my-case-records', params: { patientId: user.patientId } }"
+                        class="dropdown-item"
+                    >
+                        Моя история болезни
+                    </RouterLink>
+                </li>
             </ul>
         </div>
 

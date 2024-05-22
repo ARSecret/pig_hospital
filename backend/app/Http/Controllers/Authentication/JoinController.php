@@ -14,7 +14,7 @@ class JoinController extends Controller
     function create(Request $request)
     {
         $request->validate([
-            'email' => ['required', 'email'],
+            'email' => ['required', 'email', 'unique:users'],
             'username' => ['required', 'unique:users'],
             'firstName' => ['required'],
             'lastName' => ['required'],

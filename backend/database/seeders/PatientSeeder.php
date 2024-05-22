@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 //use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Models\CaseRecord;
+use App\Models\Doctor;
 use App\Models\Patient;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -26,7 +28,7 @@ class PatientSeeder extends Seeder
 
     private function createTestPatient(): void
     {
-        Patient::factory()->has(User::factory()->state([
+        $testPatient = Patient::factory()->has(User::factory()->state([
             'first_name' => 'Иван',
             'last_name' => 'Петров',
             'username' => 'testpatient',
@@ -34,5 +36,7 @@ class PatientSeeder extends Seeder
             'email' => 'test@patient.com',
             'gender' => 'male',
         ]))->create();
+
+        CaseRecord::factory()->for($testPatient)->count(5)->create();
     }
 }

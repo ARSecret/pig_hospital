@@ -82,14 +82,14 @@ const router = createRouter({
                 allowedRoles: ['doctor'],
             },
         },
-        // {
-        //     path: '/patients/:patientId/case-records',
-        //     name: 'case-records',
-        //     component: PatientCaseRecords,
-        //     meta: {
-        //         allowedRoles: ['doctor'],
-        //     },
-        // },
+        {
+            path: '/patient/:patientId/case-records',
+            name: 'my-case-records',
+            component: () => import('@/views/PatientCaseRecords.vue'),
+            meta: {
+                allowedRoles: ['patient', 'doctor'],
+            },
+        },
     ],
 });
 

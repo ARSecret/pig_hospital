@@ -1,23 +1,22 @@
-<script setup lang="ts">
-import { useApi } from '@/stores/api';
-import { computed, ref, type Ref } from 'vue';
+<script setup>
+import { computed, ref, inject } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import NotFound from '@/components/NotFound.vue';
 
-let api = useApi();
+let api = inject('api');
 
 let route = useRoute();
 
-let patientId = route.params.patientId as string;
+let patientId = route.params.patientId;
 
 let patientNotFound = ref(false);
 let caseRecordsLoaded = ref(false);
 
-let patient: Ref<any> = ref(null);
-let caseRecords: Ref<any[]> = ref([]);
+let patient = ref(null);
+let caseRecords = ref([]);
 
 function reload() {
-    api.getPatient(patientId).then(result => {
+    api.getPatient(patientId).then((result) => {
         patient.value = null;
         if (result == null) {
             patientNotFound.value = true;
@@ -25,7 +24,7 @@ function reload() {
             patient.value = result;
         }
     });
-    api.getAllPatientCaseRecords(patientId).then(result => {
+    api.getPatientCaseRecords(patientId).then((result) => {
         caseRecords.value = [];
         if (result == null) {
             patientNotFound.value = true;
@@ -37,11 +36,8 @@ function reload() {
 }
 reload();
 
-
-
-
-function getDateString(caseRecord: any) {
-    let date = new Date(caseRecord.datetime);
+function getDateString(caseRecord) {
+    let date = new Date(caseRecord.date_time);
     let day = date.getDate();
     let dayString = day.toString();
     if (day < 10) {
@@ -59,9 +55,9 @@ function getDateString(caseRecord: any) {
 
 let newCaseRecordText = ref('');
 
-function addNewCaseRecord(event: Event) {
+function addNewCaseRecord(event) {
     event.preventDefault();
-    api.postPatientCaseRecord(patient.value.id, newCaseRecordText.value).then(result => {
+    api.postPatientCaseRecord(patient.value.id, newCaseRecordText.value).then((result) => {
         reload();
     });
 }
@@ -75,12 +71,12 @@ function addNewCaseRecord(event: Event) {
             <h4 class="mb-3">Возраст <span class="placeholder col-2"></span></h4>
         </div>
         <div v-else>
-            <h3>Пациент {{ patient.full_name }}</h3>
+            <h3>Пациент {{ patient.fullName }}</h3>
             <h4 class="mb-3">Возраст {{ patient.age }}</h4>
         </div>
         <div v-if="!caseRecordsLoaded">
             <div class="row g-4">
-                <div class="col-xs-12" v-for="_ in 4">
+                <div v-for="_ in 4" :key="_" class="col-xs-12">
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title placeholder-glow">
@@ -100,29 +96,40 @@ function addNewCaseRecord(event: Event) {
         </div>
         <div v-else>
             <div class="row-gap-4 row">
-                <div class="col">
+                <div class="col" v-if="api.user.value.role == 'doctor'">
                     <div class="card">
                         <form action="">
                             <div class="card-body d-flex flex-column">
                                 <h5 class="card-title">Новая запись</h5>
                                 <h6 class="card-subtitle text-body-secondary mb-3">
-                                    {{ api.user.doctor.full_name }} ({{ api.user.doctor.speciality.name }})
+                                    {{ api.user.value.fullName }} ({{
+                                        api.user.value.speciality.name
+                                    }})
                                 </h6>
-                                <textarea v-model="newCaseRecordText" class="form-control mb-3" rows="3"></textarea>
-                                <button class="btn btn-primary align-self-end" @click="addNewCaseRecord">Сохранить</button>
+                                <textarea
+                                    v-model="newCaseRecordText"
+                                    class="form-control mb-3"
+                                    rows="3"
+                                ></textarea>
+                                <button
+                                    class="btn btn-primary align-self-end"
+                                    @click="addNewCaseRecord"
+                                >
+                                    Сохранить
+                                </button>
                             </div>
                         </form>
                     </div>
                 </div>
-                <div v-if="caseRecords.length == 0">
-                    Пусто!
-                </div>
-                <div v-for="caseRecord in caseRecords" class="col-xs-12">
+                <div v-if="caseRecords.length == 0">Пусто!</div>
+                <div v-for="caseRecord in caseRecords" :key="caseRecord.id" class="col-xs-12">
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">{{ getDateString(caseRecord) }}</h5>
                             <h6 class="card-subtitle text-body-secondary">
-                                {{ caseRecord.doctor.full_name }} ({{ caseRecord.doctor.speciality.name }})
+                                {{ caseRecord.doctor.fullName }} ({{
+                                    caseRecord.doctor.speciality.name
+                                }})
                             </h6>
                             <p class="card-text">{{ caseRecord.text }}</p>
                         </div>
