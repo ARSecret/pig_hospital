@@ -57,6 +57,7 @@ function getAppointmentStatus(appointment) {
 
 function confirmAppointment(id) {
     api.confirmAppointment(id);
+    appointments.value.find(appointment => appointment.id == id).status = 'confirmed';
 }
 </script>
 
