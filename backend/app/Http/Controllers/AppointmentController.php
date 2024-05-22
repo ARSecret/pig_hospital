@@ -40,7 +40,7 @@ class AppointmentController extends Controller
         return response('Appointment created', 200);
     }
 
-    public function destroy(Appointment $appointment, Request $request)
+    public function cancel(Appointment $appointment, Request $request)
     {
         $this->authorize('delete', $appointment);
 
@@ -52,6 +52,8 @@ class AppointmentController extends Controller
 
         $appointment->status = AppointmentStatus::Cancelled;
         $appointment->save();
+
+        return response('cancelled', 200);
     }
 
     public function confirm(Appointment $appointment)
@@ -73,5 +75,29 @@ class AppointmentController extends Controller
             });
 
         return response('confirmed', 200);
+    }
+
+    public function success(Appointment $appointment, Request $request)
+    {
+        $this->authorize('update', $appointment);
+        if ($appointment->status != AppointmentStatus::Confirmed){
+            abort(400, 'Cannot confirm this appointment');
+        }
+        $appointment->status = AppointmentStatus::Successful;
+        $appointment->save();
+        
+        return response('set successful', 200);
+    }
+
+    public function didntCome(Appointment $appointment, Request $request)
+    {
+        $this->authorize('update', $appointment);
+        if ($appointment->status != AppointmentStatus::Confirmed){
+            abort(400, 'Cannot confirm this appointment');
+        }
+        $appointment->status = AppointmentStatus::DidntCome;
+        $appointment->save();
+        
+        return response('set didnt come', 200);
     }
 }

@@ -35,7 +35,11 @@ api.getDoctorPatients(api.user.value.doctorId).then((result) => {
                 <div class="card-body">
                     <h5 class="card-title text-nowrap">{{ patient.fullName }}</h5>
                     <p class="card-text text-nowrap">{{ patient.birthdate }}</p>
-                    
+                    <RouterLink
+                        :to="{ name: 'my-case-records', params: { patientId: patient.patientId } }"
+                        class="btn btn-primary d-flex"
+                        >История болезни</RouterLink
+                    >
                 </div>
             </div>
         </div>

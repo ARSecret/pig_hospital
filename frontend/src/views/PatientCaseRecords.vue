@@ -21,6 +21,7 @@ function reload() {
         if (result == null) {
             patientNotFound.value = true;
         } else {
+            console.log('Patient:', result);
             patient.value = result;
         }
     });
@@ -57,7 +58,7 @@ let newCaseRecordText = ref('');
 
 function addNewCaseRecord(event) {
     event.preventDefault();
-    api.postPatientCaseRecord(patient.value.id, newCaseRecordText.value).then((result) => {
+    api.addPatientCaseRecord(patient.value.patientId, newCaseRecordText.value).then((result) => {
         reload();
     });
 }

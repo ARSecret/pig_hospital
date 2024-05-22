@@ -63,9 +63,9 @@ class PatientController extends Controller
         ]);
 
         $caseRecord = new CaseRecord;
-        $caseRecord->doctor()->associate($request->user()->doctor);
+        $caseRecord->doctor()->associate($request->user()->concrete);
         $caseRecord->patient()->associate($patient);
-        $caseRecord->datetime = new DateTime('now');
+        $caseRecord->date_time = new DateTime('now');
         $caseRecord->text = $request->text;
         $caseRecord->save();
 

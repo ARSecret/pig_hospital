@@ -50,7 +50,7 @@ class PatientPolicy
 
     public function createCaseRecord(User $user, Patient $patient): bool
     {
-        if ($user->doctor && $user->doctor->getPatients()->contains($patient)) {
+        if ($user->concrete instanceof Doctor && $user->concrete->getPatients()->contains($patient)) {
             return true;
         }
 

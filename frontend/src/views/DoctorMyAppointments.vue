@@ -50,6 +50,10 @@ function getAppointmentStatus(appointment) {
             return 'Добавлена';
         case 'confirmed':
             return 'Подтверждено';
+        case 'didnt-come':
+            return 'Пациент не пришёл';
+        case 'successful':
+            return 'Прошёл успешно';
         default:
             return 'Неизвестный статус';
     }
@@ -57,7 +61,22 @@ function getAppointmentStatus(appointment) {
 
 function confirmAppointment(id) {
     api.confirmAppointment(id);
-    appointments.value.find(appointment => appointment.id == id).status = 'confirmed';
+    appointments.value.find((appointment) => appointment.id == id).status = 'confirmed';
+}
+
+function cancelAppointment(id) {
+    api.cancelAppointment(id);
+    appointments.value.find((appointment) => appointment.id == id).status = 'cancelled';
+}
+
+function successAppointment(id) {
+    api.successAppointment(id);
+    appointments.value.find((appointment) => appointment.id == id).status = 'successful';
+}
+
+function setDidntComeAppointment(id) {
+    api.setDidntComeAppointment(id);
+    appointments.value.find((appointment) => appointment.id == id).status = 'didnt-come';
 }
 </script>
 
@@ -90,16 +109,38 @@ function confirmAppointment(id) {
                                     </button>
                                 </div>
                                 <div class="col d-grid" v-if="appointment.status == 'confirmed'">
-                                    <button class="btn btn-success">Завершено</button>
+                                    <button
+                                        class="btn btn-success"
+                                        @click="successAppointment(appointment.id)"
+                                    >
+                                        Завершено
+                                    </button>
                                 </div>
                                 <div class="col d-grid" v-if="appointment.status == 'confirmed'">
-                                    <button class="btn btn-warning">Пациент не пришел</button>
+                                    <button
+                                        class="btn btn-warning"
+                                        @click="setDidntComeAppointment(appointment.id)"
+                                    >
+                                        Пациент не пришел
+                                    </button>
                                 </div>
                                 <div class="col d-grid" v-if="appointment.status == 'confirmed'">
-                                    <button class="btn btn-danger">Отменить</button>
+                                    <button
+                                        class="btn btn-danger"
+                                        @click="cancelAppointment(appointment.id)"
+                                    >
+                                        Отменить
+                                    </button>
                                 </div>
                                 <div v-if="appointment.status == 'confirmed'" class="col d-grid">
-                                    <RouterLink :to="{ name: 'video-call', params: { doctorId: api.user.value.doctorId }}" class="btn btn-secondary">Онлайн</RouterLink>
+                                    <RouterLink
+                                        :to="{
+                                            name: 'video-call',
+                                            params: { doctorId: api.user.value.doctorId },
+                                        }"
+                                        class="btn btn-secondary"
+                                        >Онлайн</RouterLink
+                                    >
                                 </div>
                             </div>
                         </div>

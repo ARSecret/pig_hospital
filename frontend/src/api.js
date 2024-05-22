@@ -204,8 +204,26 @@ export class Api {
         return await this.#get(`patients/${patientId}/case-records`);
     }
 
+    async addPatientCaseRecord(patientId, caseRecordText) {
+        await this.#post(`patients/${patientId}/case-records`, {
+            text: caseRecordText,
+        });
+    }
+
     async confirmAppointment(appointmentId) {
         return await this.#patch(`appointments/${appointmentId}/confirm`);
+    }
+
+    async cancelAppointment(appointmentId) {
+        return await this.#patch(`appointments/${appointmentId}/cancel`);
+    }
+
+    async successAppointment(appointmentId) {
+        return await this.#patch(`appointments/${appointmentId}/success`);
+    }
+
+    async setDidntComeAppointment(appointmentId) {
+        return await this.#patch(`appointments/${appointmentId}/didnt-come`);
     }
 
     async logIn(username, password) {

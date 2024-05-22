@@ -87,6 +87,11 @@ Route::controller(AppointmentController::class)
             Route::post('/doctors/{doctor}/appointments', 'store');
             Route::delete('/appointments/{appointment}', 'destroy');
             Route::patch('/appointments/{appointment}/confirm', 'confirm');
+            
+            Route::patch('/appointments/{appointment}/cancel', 'cancel');
+            
+            Route::patch('/appointments/{appointment}/success', 'success');
+            Route::patch('/appointments/{appointment}/didnt-come', 'didntCome');
         }
     );
 
