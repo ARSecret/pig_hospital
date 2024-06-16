@@ -6,7 +6,6 @@ import { getDoctorImageUrl } from '@/functions';
 let { doctor } = defineProps(['doctor']);
 
 let api = inject('api');
-console.log(api.user.value.role);
 </script>
 
 <template>
@@ -23,7 +22,7 @@ console.log(api.user.value.role);
             <h5 class="card-title text-nowrap overflow-hidden">{{ doctor.fullName }}</h5>
             <p class="card-text text-nowrap">{{ doctor.speciality.name }}</p>
             <RouterLink
-                v-if="api.user.value.role == 'patient'"
+                v-if="api.user.value && api.user.value.role == 'patient'"
                 :to="{ name: 'doctor-appointments', params: { doctorId: doctor.id } }"
                 class="btn btn-primary"
             >
