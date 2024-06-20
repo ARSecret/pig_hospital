@@ -98,6 +98,7 @@ Route::controller(AppointmentController::class)
 Route::controller(NewsController::class)->group(
     function () {
         Route::get('/news', 'index');
+        Route::get('/news/{article}', 'show');
     }
 );
 

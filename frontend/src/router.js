@@ -10,6 +10,11 @@ const router = createRouter({
             component: () => import('@/views/HomeView.vue'),
         },
         {
+            path: '/news/:articleId',
+            name: 'show-news-article',
+            component: () => import('@/views/ShowNewsArticleView.vue'),
+        },
+        {
             path: '/doctors',
             name: 'doctors',
             component: () => import('@/views/IndexDoctorsView.vue'),

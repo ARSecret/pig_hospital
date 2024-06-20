@@ -57,26 +57,45 @@ function getNewsDateString(newsItem) {
             </div>
         </div>
     </div>
-    <div v-for="newsItem in news" v-else :key="newsItem.id" class="card mb-3">
+    <div v-for="newsItem in news" v-else :key="newsItem.id" class="card mb-3 news-card card-image">
         <div class="row g-0">
-            <div class="col-md-4">
-                <img
-                    v-if="newsItem.image_url"
-                    class="img-fluid rounded-start"
-                    :src="newsItem.image_url"
-                    alt="Фото новости"
-                />
-            </div>
-            <div class="col-md-8">
+            <img :src="newsItem.image_url" alt="" class="d-block d-md-none" />
+            <div
+                class="col-md-5 news-image rounded-start"
+                :style="{ 'background-image': `url(${newsItem.image_url})` }"
+            ></div>
+            <div class="col-md-7">
                 <div class="card-body">
-                    <h5 class="card-title">{{ newsItem.title }}</h5>
-                    <p class="card-text">{{ newsItem.text }}</p>
-                    <p class="card-text">
-                        <small class="text-body-secondary">{{ getNewsDateString(newsItem) }}</small>
+                    <p class="card-text text-body-secondary mb-1">
+                        {{ getNewsDateString(newsItem) }}
                     </p>
+                    <h5 class="card-title">{{ newsItem.title }}</h5>
+                    <p class="card-text news-text">
+                        {{ newsItem.text }}
+                        <div class="news-shadow"></div>
+                    </p>
+                    <RouterLink :to="{name: 'show-news-article', params: {articleId: newsItem.id}}" class="stretched-link">Читать далее...</RouterLink>
                 </div>
             </div>
         </div>
     </div>
 </template>
-@/api
+
+<style lang="scss">
+.news-image {
+    background-size: cover;
+    background-position: center;
+}
+.news-text {
+    position: relative;
+    height: 15vw;
+    overflow: hidden;
+}
+.news-shadow {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 30px;
+    box-shadow: inset 0 -30px 30px white;
+}
+</style>

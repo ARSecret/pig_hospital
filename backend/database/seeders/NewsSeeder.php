@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\News;
+use App\Models\NewsArticle;
 use DateTime;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -101,7 +101,7 @@ class NewsSeeder extends Seeder
 
         // News::factory()->count(8)->create();
         foreach ($news as $news) {
-            News::create($news);
+            NewsArticle::create($news);
         }
     }
 }

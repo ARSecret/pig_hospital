@@ -184,6 +184,10 @@ export class Api {
         return await this.#get('news');
     }
 
+    async getNewsArticle(articleId) {
+        return await this.#get(`news/${articleId}`);
+    }
+
     async getSpeciality(id) {
         return await this.#get(`specialities/${id}`, {}, 404);
     }
