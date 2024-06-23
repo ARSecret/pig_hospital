@@ -49,7 +49,7 @@ async function setupVideo() {
     await client.join(
         'd05bb914683249898c339680aaf6a4c7',
         `channel-${doctorId}`,
-        '007eJxTYEieq1DbceR8yPG7C8w/vF5zLvJR29K3AXqs/FZdfGde9YspMKQYmCYlWRqamFkYG5lYWlhaJBsbW5pZGCQmppklmiSbS4cWpjUEMjLcvVzMyMgAgSA+J0NyRmJeXmqOriEDAwBR5iHD',
+        '007eJxTYChMPBewx6jJQmSXURZrcP7VFCuN1LUNh9bs71l/4lh7hagCQ4qBaVKSpaGJmYWxkYmlhaVFsrGxpZmFQWJimlmiSbK5lmhFWkMgI4NkizwzIwMEgvicDMkZiXl5qTm6hgwMAFpIHkY=',
         api.user.value.id,
     );
     selfVideoTrack = await AgoraRTC.createCameraVideoTrack({});
