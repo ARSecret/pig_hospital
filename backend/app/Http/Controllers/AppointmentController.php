@@ -42,7 +42,7 @@ class AppointmentController extends Controller
 
     public function cancel(Appointment $appointment, Request $request)
     {
-        $this->authorize('delete', $appointment);
+        $this->authorize('update', $appointment);
 
         if (!$appointment->canBeCancelled()) {
             throw ValidationException::withMessages([

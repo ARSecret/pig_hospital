@@ -54,6 +54,8 @@ function getAppointmentStatus(appointment) {
             return 'Пациент не пришёл';
         case 'successful':
             return 'Прошёл успешно';
+        case 'cancelled':
+            return 'Отменена';
         default:
             return 'Неизвестный статус';
     }
