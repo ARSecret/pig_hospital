@@ -7,6 +7,7 @@ let doctorId = route.params.doctorId;
 let api = inject('api');
 
 let doctor = ref(null);
+
 if (api.user.value.role == 'doctor') {
     doctor.value = api.user.value;
 } else {
@@ -48,8 +49,8 @@ async function setupVideo() {
     });
     await client.join(
         'd05bb914683249898c339680aaf6a4c7',
-        `channel-${doctorId}`,
-        '007eJxTYChMPBewx6jJQmSXURZrcP7VFCuN1LUNh9bs71l/4lh7hagCQ4qBaVKSpaGJmYWxkYmlhaVFsrGxpZmFQWJimlmiSbK5lmhFWkMgI4NkizwzIwMEgvicDMkZiXl5qTm6hgwMAFpIHkY=',
+        `channel-1`,
+        '007eJxTYNi4sDOAt1U8hNFKPjD16drJ168w1fPGr09Qavu9RIY1K0aBIcXANCnJ0tDEzMLYyMTSwtIi2djY0szCIDExzSzRJNm8prs6rSGQkaGjTICZkQECQXxOhuSMxLy81BxdQwYGAPIEHZU=',
         api.user.value.id,
     );
     selfVideoTrack = await AgoraRTC.createCameraVideoTrack({});
@@ -71,13 +72,13 @@ onMounted(() => {
 <template>
     <div class="container">
         <div class="row">
-            <div class="col-6">
+            <div class="col-12 col-md-6">
                 <div id="doctor-player" class="shadow" style="height: 500px"></div>
                 <h3 v-if="doctor" id="doctor-title" class="text-center">
                     {{ doctor.fullName }} ({{ doctor.speciality.name }})
                 </h3>
             </div>
-            <div class="col-6">
+            <div class="col-12 col-md-6">
                 <div id="patient-player" class="shadow" style="height: 500px"></div>
                 <h3 id="patient-title" class="text-center">Пациент</h3>
             </div>

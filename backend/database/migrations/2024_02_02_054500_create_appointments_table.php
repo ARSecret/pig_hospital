@@ -18,8 +18,8 @@ return new class extends Migration
                 $table->id();
                 $table->timestamps();
                 $table->dateTime('date_time');
-                $table->foreignId('patient_id');
-                $table->foreignId('doctor_id');
+                $table->foreignId('patient_id')->constrained();
+                $table->foreignId('doctor_id')->constrained();
                 $table->enum(
                     'status',
                     array_map(
