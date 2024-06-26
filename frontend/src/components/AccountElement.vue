@@ -1,5 +1,6 @@
 <script setup>
-import { inject } from 'vue';
+import * as bootstrap from 'bootstrap';
+import { inject, onMounted } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 
 function logout() {
@@ -11,6 +12,13 @@ function logout() {
 let api = inject('api');
 let router = useRouter();
 let user = api.user;
+
+
+function collapseNavbar() {
+    let collapseElement = document.querySelector('#navbarSupportedContent');
+    collapseElement = new bootstrap.Collapse(collapseElement);
+    collapseElement.hide();
+}
 
 defineProps(['loginModalId']);
 
@@ -25,7 +33,7 @@ console.log(api.user.value);
             </button>
             <ul class="dropdown-menu">
                 <li>
-                    <RouterLink :to="{ name: 'my-profile' }" class="dropdown-item"
+                    <RouterLink :to="{ name: 'my-profile' }" class="dropdown-item" @click="collapseNavbar"
                         >Личный кабинет</RouterLink
                     >
                 </li>
@@ -33,7 +41,7 @@ console.log(api.user.value);
                     <RouterLink
                         v-if="user.role == 'doctor'"
                         :to="{ name: 'my-patients' }"
-                        class="dropdown-item"
+                        class="dropdown-item" @click="collapseNavbar"
                         >Мои пациенты
                     </RouterLink>
                 </li>
@@ -41,7 +49,7 @@ console.log(api.user.value);
                     <RouterLink
                         v-if="user.role == 'doctor'"
                         :to="{ name: 'my-appointments' }"
-                        class="dropdown-item"
+                        class="dropdown-item" @click="collapseNavbar"
                         >Мои приемы
                     </RouterLink>
                 </li>
@@ -49,7 +57,7 @@ console.log(api.user.value);
                     <RouterLink
                         v-if="user.role == 'patient'"
                         :to="{ name: 'patient-appointments' }"
-                        class="dropdown-item"
+                        class="dropdown-item" @click="collapseNavbar"
                         >Мои записи
                     </RouterLink>
                 </li>
@@ -58,7 +66,7 @@ console.log(api.user.value);
                     <RouterLink
                         v-if="user.role == 'patient'"
                         :to="{ name: 'my-case-records', params: { patientId: user.patientId } }"
-                        class="dropdown-item"
+                        class="dropdown-item" @click="collapseNavbar"
                     >
                         Моя история болезни
                     </RouterLink>

@@ -4,7 +4,7 @@ import { computed, ref, inject } from 'vue';
 let api = inject('api');
 
 let role = computed(() => {
-    switch (api.user.role) {
+    switch (api.user.value.role) {
         case 'doctor':
             return 'врач';
         case 'patient':
